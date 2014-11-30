@@ -1,3 +1,7 @@
+/bin
 *.class
-bin/
-.tokens
+*.tokens
+!src/ConvertPd.java
+!src/ConvertPdListener.java
+!src/Rows.g4
+src/
