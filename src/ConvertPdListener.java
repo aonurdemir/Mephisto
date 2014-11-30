@@ -109,7 +109,7 @@ public class ConvertPdListener extends RowsBaseListener {
 			List<Pair> comingSourcecsToInlet0 = pdObject.objectInlets.get(0);
 			Pair inlet0=null;
 			if(comingSourcecsToInlet0 !=null){
-				inlet0 = comingSourcecsToInlet0.get(0);
+				inlet0 = comingSourcecsToInlet0.get(0);        
 			}
 			
 			
