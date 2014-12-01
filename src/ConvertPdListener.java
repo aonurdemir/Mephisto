@@ -16,7 +16,7 @@ public class ConvertPdListener extends RowsBaseListener {
 			this.outletNumber = outletNumber;
 		}
 		public String toString() {
-			return objectNumber + "-" + outletNumber;  
+			return objectNumber + "-" + outletNumber; 
 		}
 	}
 	class PDObject{
@@ -80,22 +80,48 @@ public class ConvertPdListener extends RowsBaseListener {
 		//Pair inlet0 = dacObject.objectInlets.get(0);
 		String inlet0 = "";
 		List<Pair> comingSourcesToInlet0 = dacObject.objectInlets.get(0);
-		for(int i=0; i<comingSourcesToInlet0.size(); i++){
-			Pair pair = comingSourcesToInlet0.get(i);
-        	inlet0 += createObject_setOutput(pair.objectNumber,pair.outletNumber) + "+";
+		if(comingSourcesToInlet0 != null){
+			for(int i=0; i<comingSourcesToInlet0.size(); i++){
+				Pair pair = comingSourcesToInlet0.get(i);
+	        	inlet0 += createObject_setOutput(pair.objectNumber,pair.outletNumber) + "+";
+			}
+			inlet0 = inlet0.substring(0, inlet0.length()-1);
 		}
-		inlet0 = inlet0.substring(0, inlet0.length()-1);
 		
-	    
-	    Pair inlet1 = dacObject.objectInlets.get(1).get(0);
-		String process = String.format("process=%s,%s;",inlet0,createObject_setOutput(inlet1.objectNumber,inlet1.outletNumber));
+		
+		String inlet1 = "";
+		List<Pair> comingSourcesToInlet1 = dacObject.objectInlets.get(1);
+		if(comingSourcesToInlet1 !=null){
+			for(int i=0; i<comingSourcesToInlet1.size(); i++){
+				Pair pair = comingSourcesToInlet1.get(i);
+	        	inlet1 += createObject_setOutput(pair.objectNumber,pair.outletNumber) + "+";
+			}
+			inlet1 = inlet1.substring(0, inlet1.length()-1);
+		}
+		
+		String process = "_";
+		if(!inlet0.equalsIgnoreCase("") && inlet1.equalsIgnoreCase("")){
+			process = String.format("process=%s;",inlet0);
+		}
+		else if(inlet0.equalsIgnoreCase("") && !inlet1.equalsIgnoreCase("")){
+			process = String.format("process=%s;",inlet1);
+		}
+		else if(!inlet0.equalsIgnoreCase("") && !inlet1.equalsIgnoreCase("")){
+			process = String.format("process=%s,%s;",inlet0,inlet1);
+		}
+		else{
+			process = "process = _;";
+		}
+				
+		
+		
+		//PRINT FASUT PROGRAM TREE
 		System.out.println(imports.get(0));
 		Iterator<Entry<Integer, String>> it = this.definitions.entrySet().iterator();
-	    while (it.hasNext()) {
-	        @SuppressWarnings("rawtypes")
-			Map.Entry pairs = (Map.Entry)it.next();
+	    while (it.hasNext()) {	        
+			Entry<Integer, String> pairs = it.next();
 	        System.out.println(pairs.getValue());
-	        it.remove(); // avoids a ConcurrentModificationException
+	        it.remove(); // avoids a ConcurrentModificationException //REMOVES ALSO FROM HASH TABLE
 	    }
 	    
 		System.out.println(process);
