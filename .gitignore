@@ -1,5 +1,4 @@
 !src/ConvertPd.java
 !src/ConvertPdListener.java
 !src/Rows.g4
-bin/*.class
-/bin/
+bin/
