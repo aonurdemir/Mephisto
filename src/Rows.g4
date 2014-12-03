@@ -7,9 +7,11 @@ row:'#X' type=CONNECT INT? INT? INT? INT? ';' NL
    |'#X' type=OBJ INT INT name=DAC ';' NL
    |'#N' type=CANVAS INT? INT? INT? INT? INT? ';' NL
    |'#X' type=FLOATATOM INT? INT? INT? INT? INT? INT? '-' '-' '-' ';' NL
-   |'#X' type=OBJ INT INT name=PLUS INT? ';' NL;
+   |'#X' type=OBJ INT INT name=PLUS INT? ';' NL
+   |'#X' type=OBJ INT INT name=MINUS INT? ';' NL;
    
 
+MINUS: '-';
 PLUS: '+';
 FLOATATOM: 'floatatom';
 OSC: 'osc~';
