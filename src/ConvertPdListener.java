@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 
 //tracked version
 public class ConvertPdListener extends RowsBaseListener {
@@ -210,7 +209,7 @@ public class ConvertPdListener extends RowsBaseListener {
 				pdObject.defaultVal = coming_into_inlet1; // this expression violates the cold inlet mechanism
 			}
 			
-			String output_on_outlet0 = String.format("%s+%s",coming_into_inlet0,pdObject.defaultVal);
+			String output_on_outlet0 = String.format("(%s+%s)",coming_into_inlet0,pdObject.defaultVal);
 			pdObject.outputs.put(outletNumber, output_on_outlet0);
 			
 			//return with respect to outlet number -> return what outletNumber is expected to return
@@ -249,7 +248,7 @@ public class ConvertPdListener extends RowsBaseListener {
 				pdObject.defaultVal = coming_into_inlet1; // this expression violates the cold inlet mechanism
 			}
 			
-			String output_on_outlet0 = String.format("%s-%s",coming_into_inlet0,pdObject.defaultVal);
+			String output_on_outlet0 = String.format("(%s-%s)",coming_into_inlet0,pdObject.defaultVal);
 			pdObject.outputs.put(outletNumber, output_on_outlet0);
 			
 			//return with respect to outlet number -> return what outletNumber is expected to return
@@ -288,7 +287,7 @@ public class ConvertPdListener extends RowsBaseListener {
 				pdObject.defaultVal = coming_into_inlet1; // this expression violates the cold inlet mechanism
 			}
 			
-			String output_on_outlet0 = String.format("%s*%s",coming_into_inlet0,pdObject.defaultVal);
+			String output_on_outlet0 = String.format("(%s*%s)",coming_into_inlet0,pdObject.defaultVal);
 			pdObject.outputs.put(outletNumber, output_on_outlet0);
 			
 			//return with respect to outlet number -> return what outletNumber is expected to return
@@ -327,7 +326,7 @@ public class ConvertPdListener extends RowsBaseListener {
 				pdObject.defaultVal = coming_into_inlet1; // this expression violates the cold inlet mechanism
 			}
 			
-			String output_on_outlet0 = String.format("%s/%s",coming_into_inlet0,pdObject.defaultVal);
+			String output_on_outlet0 = String.format("(%s/%s)",coming_into_inlet0,pdObject.defaultVal);
 			pdObject.outputs.put(outletNumber, output_on_outlet0);
 			
 			//return with respect to outlet number -> return what outletNumber is expected to return
@@ -376,6 +375,22 @@ public class ConvertPdListener extends RowsBaseListener {
 					defaultVal = ctx.INT(2).getText();
 				}		
 				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.MINUS],defaultVal));
+				objNo++;
+			}
+			else if(ctx.name.getType() == RowsParser.MULTIPLY){
+				String defaultVal = "0";
+				if(ctx.INT(2) != null){
+					defaultVal = ctx.INT(2).getText();
+				}		
+				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.MULTIPLY],defaultVal));
+				objNo++;
+			}
+			else if(ctx.name.getType() == RowsParser.DIVIDE){
+				String defaultVal = "0";
+				if(ctx.INT(2) != null){
+					defaultVal = ctx.INT(2).getText();
+				}		
+				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.DIVIDE],defaultVal));
 				objNo++;
 			}
 		}
