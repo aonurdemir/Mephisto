@@ -138,14 +138,19 @@ public class ConvertPdListener extends RowsBaseListener {
 			if(comingSourcecsToInlet0 !=null){
 				inlet0 = comingSourcecsToInlet0.get(0);        
 			}
+					
 			
+			//Create the object coming into current PDObject's inlet and get its output
+			String coming_into_inlet0 = null;
+			if(inlet0 != null){
+				coming_into_inlet0 = createObject_setOutput(inlet0.objectNumber, inlet0.objectNumber);
+				pdObject.defaultVal = coming_into_inlet0;
+			}
 			
-			//Create the object coming into current PDObject's inlet and get its output 
-			String coming_into_inlet0 = createObject_setOutput(inlet0.objectNumber, inlet0.objectNumber);
 			String output_on_outlet0 = String.format("osc%s", objectNumber);
 			
 			pdObject.outputs.put(outletNumber,output_on_outlet0);
-			this.definitions.put(objectNumber, String.format("osc%s=osc(%s);", objectNumber,coming_into_inlet0));
+			this.definitions.put(objectNumber, String.format("osc%s=osc(%s);", objectNumber,pdObject.defaultVal));
 			return output_on_outlet0;
 		}
 		
@@ -176,7 +181,7 @@ public class ConvertPdListener extends RowsBaseListener {
 
 					
 		}
-		else if(pdObject.name.equalsIgnoreCase("'+'")){
+		else if(pdObject.name.equalsIgnoreCase("PLUS")){
 			//Collect objects coming into inlet 0
 			List<Pair> comingSourcecsToInlet0 = pdObject.objectInlets.get(0);
 			Pair inlet0=null;
@@ -215,7 +220,7 @@ public class ConvertPdListener extends RowsBaseListener {
 			//return with respect to outlet number -> return what outletNumber is expected to return
 			return output_on_outlet0;
 		}
-		else if(pdObject.name.equalsIgnoreCase("'-'")){
+		else if(pdObject.name.equalsIgnoreCase("MINUS")){
 			//Collect objects coming into inlet 0
 			List<Pair> comingSourcecsToInlet0 = pdObject.objectInlets.get(0);
 			Pair inlet0=null;
@@ -254,7 +259,7 @@ public class ConvertPdListener extends RowsBaseListener {
 			//return with respect to outlet number -> return what outletNumber is expected to return
 			return output_on_outlet0;
 		}
-		else if(pdObject.name.equalsIgnoreCase("'*'")){
+		else if(pdObject.name.equalsIgnoreCase("MULTIPLY")){
 			//Collect objects coming into inlet 0
 			List<Pair> comingSourcecsToInlet0 = pdObject.objectInlets.get(0);
 			Pair inlet0=null;
@@ -293,7 +298,7 @@ public class ConvertPdListener extends RowsBaseListener {
 			//return with respect to outlet number -> return what outletNumber is expected to return
 			return output_on_outlet0;
 		}
-		else if(pdObject.name.equalsIgnoreCase("'/'")){
+		else if(pdObject.name.equalsIgnoreCase("DIVIDE")){
 			//Collect objects coming into inlet 0
 			List<Pair> comingSourcecsToInlet0 = pdObject.objectInlets.get(0);
 			Pair inlet0=null;
