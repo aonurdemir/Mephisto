@@ -164,26 +164,33 @@ public class ConvertPdListener extends RowsBaseListener {
 		
 		else if(pdObject.name.equalsIgnoreCase("'floatatom'")){
 			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
-			Pair inlet0=null;
+			String inlet0="";
 			if(comingSourcesToInlet0 !=null){
-				inlet0 = comingSourcesToInlet0.get(0);
+				Pair tmp = comingSourcesToInlet0.get(0);
+				PDObject obj = pdObjects.get(tmp.objectNumber);
+				if(obj.name.equalsIgnoreCase("'msg'")){
+					String objOut = createObject_setOutput(tmp.objectNumber, tmp.objectNumber);
+					inlet0 +=  String.format("((1-checkbox%s)*number%s)+%s",tmp.objectNumber,objectNumber,objOut);
+				}
+				else{
+					inlet0 += createObject_setOutput(tmp.objectNumber, tmp.objectNumber);
+				}
+				//inlet0 = createObject_setOutput(tmp.objectNumber, tmp.objectNumber);
+				
 			}		
 			
-			String coming_into_inlet0 = null;
-			if(inlet0 != null){
-				//Create the object coming into current PDObject and get its output 
-				coming_into_inlet0 = createObject_setOutput(inlet0.objectNumber, inlet0.objectNumber);				
-			}
 			
 			
-			String output_on_outlet0 = String.format("number%s",objectNumber);						
+			
+			String output_on_outlet0 = String.format("%s",inlet0);						
 			pdObject.outputs.put(outletNumber, output_on_outlet0);
-			if(coming_into_inlet0 == null){
+			//if(inlet0 == null){
 				this.definitions.put(objectNumber, String.format("number%s=hslider(\"number %s\" ,440 ,0,4000,10);", objectNumber,objectNumber));
-			}
-			else{
-				this.definitions.put(objectNumber, String.format("number%s=%s;", objectNumber,coming_into_inlet0));
-			}
+			//}
+//			else{
+//				
+//				this.definitions.put(objectNumber, String.format("number%s=%s;", objectNumber,inlet0));
+//			}
 			
 			return output_on_outlet0;
 
@@ -285,20 +292,16 @@ public class ConvertPdListener extends RowsBaseListener {
 			
 			//Collect objects coming into inlet 1
 			List<Pair> comingSourcesToInlet1 = pdObject.objectInlets.get(1);
-			Pair inlet1=null;
+			String inlet1="";
 			if(comingSourcesToInlet1 !=null){
-				//TODO actually -> taking only the first object coming into inlet 0
-				// expected -> should take all objects coming into inlet 0
-				inlet1 = comingSourcesToInlet1.get(0);
+				for(int i=0; i< comingSourcesToInlet1.size(); i++){
+					Pair obj = comingSourcesToInlet1.get(i);
+					inlet1 += createObject_setOutput(obj.objectNumber, obj.outletNumber) + "+";
+				}
+				inlet1 = inlet1.substring(0, inlet1.length()-1);
+				pdObject.defaultVal = inlet1;
 			}
 			
-			
-			String coming_into_inlet1 = null;
-			if(inlet1 != null){
-				//Create the object coming into current PDObject and get its output 
-				coming_into_inlet1 = createObject_setOutput(inlet1.objectNumber, inlet1.objectNumber);
-				pdObject.defaultVal = coming_into_inlet1; // this expression violates the cold inlet mechanism
-			}
 			
 			String output_on_outlet0 = String.format("(%s*%s)",coming_into_inlet0,pdObject.defaultVal);
 			pdObject.outputs.put(outletNumber, output_on_outlet0);
