@@ -10,7 +10,8 @@ row:'#X' type=CONNECT INT? INT? INT? INT? ';' NL
    |'#X' type=OBJ INT INT name=PLUS INT? ';' NL
    |'#X' type=OBJ INT INT name=MINUS INT? ';' NL
    |'#X' type=OBJ INT INT name=MULTIPLY INT? ';' NL
-   |'#X' type=OBJ INT INT name=DIVIDE INT? ';' NL;
+   |'#X' type=OBJ INT INT name=DIVIDE INT? ';' NL
+   |'#X' type=MSG INT INT INT* ';' NL;
 
 DIVIDE: '/' | '/~';
 MULTIPLY: '*' | '*~';
@@ -23,6 +24,7 @@ INT: [0-9]+;
 OBJ: 'obj';
 CANVAS: 'canvas';
 CONNECT: 'connect';
+MSG: 'msg';
 
 TAB : [ \t]+ -> skip ;
 NL : '\r'? '\n';
