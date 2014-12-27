@@ -12,6 +12,7 @@ row:'#X' type=CONNECT INT? INT? INT? INT? ';' NL
    |'#X' type=OBJ INT INT name=MULTIPLY INT? ';' NL
    |'#X' type=OBJ INT INT name=DIVIDE INT? ';' NL
    |'#X' type=OBJ INT INT name=POW INT? ';' NL
+   |'#X' type=OBJ INT INT name=TRIGGER (INT|STRING)+ ';' NL
    |'#X' type=MSG INT INT INT* ';' NL;
 
 DIVIDE: '/' | '/~';
@@ -21,12 +22,15 @@ PLUS: '+'| '+~';
 FLOATATOM: 'floatatom';
 OSC: 'osc~';
 DAC: 'dac~';
-INT: [0-9]+;
 OBJ: 'obj';
 CANVAS: 'canvas';
 CONNECT: 'connect';
 MSG: 'msg';
 POW: 'pow';
+INT: [0-9]+;
+TRIGGER : 'trigger';
+STRING: [a-zA-z0-9]+;
+
 
 TAB : [ \t]+ -> skip ;
 NL : '\r'? '\n';

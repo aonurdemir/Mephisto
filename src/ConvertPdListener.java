@@ -122,8 +122,11 @@ public class ConvertPdListener extends RowsBaseListener {
 				
 		
 		
-		//PRINT FASUT PROGRAM TREE
-		System.out.println(imports.get(0));
+		//PRINT FAUST PROGRAM TREE
+		if(imports.size() > 0){
+			System.out.println(imports.get(0));
+		}
+		
 		Iterator<Entry<Integer, String>> it = this.definitions.entrySet().iterator();
 	    while (it.hasNext()) {	        
 			Entry<Integer, String> pairs = it.next();
