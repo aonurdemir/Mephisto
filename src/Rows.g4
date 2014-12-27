@@ -6,7 +6,7 @@ row:'#X' type=CONNECT INT? INT? INT? INT? ';' NL
    |'#X' type=OBJ INT INT name=OSC INT? ';' NL
    |'#X' type=OBJ INT INT name=DAC ';' NL
    |'#N' type=CANVAS INT? INT? INT? INT? INT? ';' NL
-   |'#X' type=FLOATATOM INT? INT? INT? INT? INT? INT? '-' '-' '-' ';' NL
+   |'#X' type=FLOATATOM INT? INT? INT? INT? INT? INT? MINUS MINUS MINUS ';' NL
    |'#X' type=OBJ INT INT name=PLUS INT? ';' NL
    |'#X' type=OBJ INT INT name=MINUS INT? ';' NL
    |'#X' type=OBJ INT INT name=MULTIPLY INT? ';' NL
@@ -15,7 +15,7 @@ row:'#X' type=CONNECT INT? INT? INT? INT? ';' NL
 
 DIVIDE: '/' | '/~';
 MULTIPLY: '*' | '*~';
-MINUS: '-'| '-~';
+MINUS: '-' | '-~';
 PLUS: '+'| '+~';
 FLOATATOM: 'floatatom';
 OSC: 'osc~';

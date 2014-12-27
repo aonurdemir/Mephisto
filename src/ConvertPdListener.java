@@ -177,10 +177,11 @@ public class ConvertPdListener extends RowsBaseListener {
 				}
 				//inlet0 = createObject_setOutput(tmp.objectNumber, tmp.objectNumber);
 				
-			}		
-			
-			
-			
+			}
+			//IF NO COMING CONNECTION INTO INLET0
+			else{
+				inlet0 = String.format("number%s",objectNumber);
+			}
 			
 			String output_on_outlet0 = String.format("%s",inlet0);						
 			pdObject.outputs.put(outletNumber, output_on_outlet0);
