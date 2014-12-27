@@ -349,6 +349,45 @@ public class ConvertPdListener extends RowsBaseListener {
 			//return with respect to outlet number -> return what outletNumber is expected to return
 			return output_on_outlet0;
 		}
+		else if(pdObject.name.equalsIgnoreCase("'pow'")){
+			//Collect objects coming into inlet 0
+			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
+			Pair inlet0=null;
+			if(comingSourcesToInlet0 !=null){
+				//TODO actually -> taking only the first object coming into inlet 0
+				// expected -> should take all objects coming into inlet 0
+				inlet0 = comingSourcesToInlet0.get(0);
+			}		
+			
+			String coming_into_inlet0 = null;
+			if(inlet0 != null){
+				//Create the object coming into current PDObject and get its output 
+				coming_into_inlet0 = createObject_setOutput(inlet0.objectNumber, inlet0.objectNumber);				
+			}
+			
+			//Collect objects coming into inlet 1
+			List<Pair> comingSourcesToInlet1 = pdObject.objectInlets.get(1);
+			Pair inlet1=null;
+			if(comingSourcesToInlet1 !=null){
+				//TODO actually -> taking only the first object coming into inlet 0
+				// expected -> should take all objects coming into inlet 0
+				inlet1 = comingSourcesToInlet1.get(0);
+			}
+			
+			
+			String coming_into_inlet1 = null;
+			if(inlet1 != null){
+				//Create the object coming into current PDObject and get its output 
+				coming_into_inlet1 = createObject_setOutput(inlet1.objectNumber, inlet1.objectNumber);
+				pdObject.defaultVal = coming_into_inlet1; // this expression violates the cold inlet mechanism
+			}
+			
+			String output_on_outlet0 = String.format("(%s^%s)",coming_into_inlet0,pdObject.defaultVal);
+			pdObject.outputs.put(outletNumber, output_on_outlet0);
+			
+			//return with respect to outlet number -> return what outletNumber is expected to return
+			return output_on_outlet0;
+		}
 		else if(pdObject.name.equalsIgnoreCase("'msg'")){
 			//Collect objects coming into inlet 0
 			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
@@ -450,6 +489,14 @@ public class ConvertPdListener extends RowsBaseListener {
 					defaultVal = ctx.INT(2).getText();
 				}		
 				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.DIVIDE],defaultVal));
+				objNo++;
+			}
+			else if(ctx.name.getType() == RowsParser.POW){
+				String defaultVal = "0";
+				if(ctx.INT(2) != null){
+					defaultVal = ctx.INT(2).getText();
+				}		
+				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.POW],defaultVal));
 				objNo++;
 			}
 		}
