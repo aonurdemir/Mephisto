@@ -147,20 +147,20 @@ public class ConvertPdListener extends RowsBaseListener {
 			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
 			Pair inlet0=null;
 			if(comingSourcesToInlet0 !=null){
-				inlet0 = comingSourcesToInlet0.get(0);        
-			}
-					
+				inlet0 = comingSourcesToInlet0.get(0);         
+			}					
 			
 			//Create the object coming into current PDObject's inlet and get its output
 			String coming_into_inlet0 = null;
 			if(inlet0 != null){
-				coming_into_inlet0 = createObject_setOutput(inlet0.objectNumber, inlet0.objectNumber);
+				coming_into_inlet0 = createObject_setOutput(inlet0.objectNumber, inlet0.outletNumber);
 				pdObject.defaultVal = coming_into_inlet0;
 			}
 			
 			String output_on_outlet0 = String.format("osc%s", objectNumber);
 			
 			pdObject.outputs.put(outletNumber,output_on_outlet0);
+			
 			this.definitions.put(objectNumber, String.format("osc%s=osc(%s);", objectNumber,pdObject.defaultVal));
 			return output_on_outlet0;
 		}
@@ -172,11 +172,11 @@ public class ConvertPdListener extends RowsBaseListener {
 				Pair tmp = comingSourcesToInlet0.get(0);
 				PDObject obj = pdObjects.get(tmp.objectNumber);
 				if(obj.name.equalsIgnoreCase("'msg'")){
-					String objOut = createObject_setOutput(tmp.objectNumber, tmp.objectNumber);
+					String objOut = createObject_setOutput(tmp.objectNumber, tmp.outletNumber);
 					inlet0 +=  String.format("((1-checkbox%s)*number%s)+%s",tmp.objectNumber,objectNumber,objOut);
 				}
 				else{
-					inlet0 += createObject_setOutput(tmp.objectNumber, tmp.objectNumber);
+					inlet0 += createObject_setOutput(tmp.objectNumber, tmp.outletNumber);
 				}
 				//inlet0 = createObject_setOutput(tmp.objectNumber, tmp.objectNumber);
 				
@@ -203,41 +203,34 @@ public class ConvertPdListener extends RowsBaseListener {
 		else if(pdObject.name.equalsIgnoreCase("PLUS")){
 			//Collect objects coming into inlet 0
 			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
-			Pair inlet0=null;
+			String inlet0="";
 			if(comingSourcesToInlet0 !=null){
-				//TODO actually -> taking only the first object coming into inlet 0
-				// expected -> should take all objects coming into inlet 0
-				inlet0 = comingSourcesToInlet0.get(0);
+				for (int i = 0; i < comingSourcesToInlet0.size(); i++) {
+					Pair tmp = comingSourcesToInlet0.get(i);
+					String out = createObject_setOutput(tmp.objectNumber, tmp.outletNumber);
+					inlet0 += out + "+";
+				}
+				inlet0 = inlet0.substring(0, inlet0.length()-1);
 			}		
-			
-			String coming_into_inlet0 = null;
-			if(inlet0 != null){
-				//Create the object coming into current PDObject and get its output 
-				coming_into_inlet0 = createObject_setOutput(inlet0.objectNumber, inlet0.objectNumber);				
-			}
 			
 			//Collect objects coming into inlet 1
 			List<Pair> comingSourcesToInlet1 = pdObject.objectInlets.get(1);
-			Pair inlet1=null;
+			String inlet1="";
 			if(comingSourcesToInlet1 !=null){
-				//TODO actually -> taking only the first object coming into inlet 0
-				// expected -> should take all objects coming into inlet 0
-				inlet1 = comingSourcesToInlet1.get(0);
-			}
-			
-			
-			String coming_into_inlet1 = null;
-			if(inlet1 != null){
-				//Create the object coming into current PDObject and get its output 
-				coming_into_inlet1 = createObject_setOutput(inlet1.objectNumber, inlet1.objectNumber);
-				pdObject.defaultVal = coming_into_inlet1; // this expression violates the cold inlet mechanism
-			}
-			
-			String output_on_outlet0 = String.format("(%s+%s)",coming_into_inlet0,pdObject.defaultVal);
+				for (int i = 0; i < comingSourcesToInlet1.size(); i++) {
+					Pair tmp = comingSourcesToInlet1.get(i);
+					String out = createObject_setOutput(tmp.objectNumber, tmp.outletNumber);
+					inlet1 += out + "+";
+				}
+				inlet1 = inlet1.substring(0, inlet1.length()-1);
+				pdObject.defaultVal = inlet1; // this expression violates the cold inlet mechanism
+			}		
+						
+			String output_on_outlet0 = String.format("(%s+%s)",inlet0,pdObject.defaultVal);
 			pdObject.outputs.put(outletNumber, output_on_outlet0);
 			
 			//return with respect to outlet number -> return what outletNumber is expected to return
-			return output_on_outlet0;
+			return pdObject.outputs.get(outletNumber);
 		}
 		else if(pdObject.name.equalsIgnoreCase("MINUS")){
 			//Collect objects coming into inlet 0
@@ -252,7 +245,7 @@ public class ConvertPdListener extends RowsBaseListener {
 			String coming_into_inlet0 = null;
 			if(inlet0 != null){
 				//Create the object coming into current PDObject and get its output 
-				coming_into_inlet0 = createObject_setOutput(inlet0.objectNumber, inlet0.objectNumber);				
+				coming_into_inlet0 = createObject_setOutput(inlet0.objectNumber, inlet0.outletNumber);				
 			}
 			
 			//Collect objects coming into inlet 1
@@ -268,7 +261,7 @@ public class ConvertPdListener extends RowsBaseListener {
 			String coming_into_inlet1 = null;
 			if(inlet1 != null){
 				//Create the object coming into current PDObject and get its output 
-				coming_into_inlet1 = createObject_setOutput(inlet1.objectNumber, inlet1.objectNumber);
+				coming_into_inlet1 = createObject_setOutput(inlet1.objectNumber, inlet1.outletNumber);
 				pdObject.defaultVal = coming_into_inlet1; // this expression violates the cold inlet mechanism
 			}
 			
@@ -291,7 +284,7 @@ public class ConvertPdListener extends RowsBaseListener {
 			String coming_into_inlet0 = null;
 			if(inlet0 != null){
 				//Create the object coming into current PDObject and get its output 
-				coming_into_inlet0 = createObject_setOutput(inlet0.objectNumber, inlet0.objectNumber);				
+				coming_into_inlet0 = createObject_setOutput(inlet0.objectNumber, inlet0.outletNumber);				
 			}
 			
 			//Collect objects coming into inlet 1
@@ -327,7 +320,7 @@ public class ConvertPdListener extends RowsBaseListener {
 			String coming_into_inlet0 = null;
 			if(inlet0 != null){
 				//Create the object coming into current PDObject and get its output 
-				coming_into_inlet0 = createObject_setOutput(inlet0.objectNumber, inlet0.objectNumber);				
+				coming_into_inlet0 = createObject_setOutput(inlet0.objectNumber, inlet0.outletNumber);				
 			}
 			
 			//Collect objects coming into inlet 1
@@ -343,7 +336,7 @@ public class ConvertPdListener extends RowsBaseListener {
 			String coming_into_inlet1 = null;
 			if(inlet1 != null){
 				//Create the object coming into current PDObject and get its output 
-				coming_into_inlet1 = createObject_setOutput(inlet1.objectNumber, inlet1.objectNumber);
+				coming_into_inlet1 = createObject_setOutput(inlet1.objectNumber, inlet1.outletNumber);
 				pdObject.defaultVal = coming_into_inlet1; // this expression violates the cold inlet mechanism
 			}
 			
@@ -366,7 +359,7 @@ public class ConvertPdListener extends RowsBaseListener {
 			String coming_into_inlet0 = null;
 			if(inlet0 != null){
 				//Create the object coming into current PDObject and get its output 
-				coming_into_inlet0 = createObject_setOutput(inlet0.objectNumber, inlet0.objectNumber);				
+				coming_into_inlet0 = createObject_setOutput(inlet0.objectNumber, inlet0.outletNumber);				
 			}
 			
 			//Collect objects coming into inlet 1
@@ -382,7 +375,7 @@ public class ConvertPdListener extends RowsBaseListener {
 			String coming_into_inlet1 = null;
 			if(inlet1 != null){
 				//Create the object coming into current PDObject and get its output 
-				coming_into_inlet1 = createObject_setOutput(inlet1.objectNumber, inlet1.objectNumber);
+				coming_into_inlet1 = createObject_setOutput(inlet1.objectNumber, inlet1.outletNumber);
 				pdObject.defaultVal = coming_into_inlet1; // this expression violates the cold inlet mechanism
 			}
 			
@@ -400,7 +393,7 @@ public class ConvertPdListener extends RowsBaseListener {
 				//TODO actually -> taking only the first object coming into inlet 0
 				// expected -> should take all objects coming into inlet 0
 				Pair tmp = comingSourcesToInlet0.get(0);
-				inlet0 = createObject_setOutput(tmp.objectNumber, tmp.objectNumber);
+				inlet0 = createObject_setOutput(tmp.objectNumber, tmp.outletNumber);
 			}
 			
 			
@@ -422,46 +415,38 @@ public class ConvertPdListener extends RowsBaseListener {
 			return output_on_outlet0;
 		}
 		else if(pdObject.name.equalsIgnoreCase("'trigger'")){
-			//Collect objects coming into inlet 0
+			//outputs
+			List<String> outputs = new ArrayList<String>(pdObject.args.size());
+			//System.out.println("trigger");
+			
+			Boolean bang = false;
+			for(int i=0; i<pdObject.args.size(); i++){
+				outputs.add("0");
+				if(pdObject.args.get(i).equalsIgnoreCase("b")||pdObject.args.get(i).equalsIgnoreCase("bang")){
+					outputs.set(i, "trigger"+objectNumber);
+					bang = true;
+				}
+				
+			}
+			if(bang==true){
+				this.definitions.put(objectNumber,String.format("t%sbang = checkbox(\"t%sbang\");", objectNumber,objectNumber));
+			}
+			
 			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
-			Pair inlet0=null;
+			String inlet0="";
 			if(comingSourcesToInlet0 !=null){
 				//TODO actually -> taking only the first object coming into inlet 0
 				// expected -> should take all objects coming into inlet 0
-				inlet0 = comingSourcesToInlet0.get(0);
-			}		
-			
-			String coming_into_inlet0 = null;
-			if(inlet0 != null){
-				//Create the object coming into current PDObject and get its output 
-				coming_into_inlet0 = createObject_setOutput(inlet0.objectNumber, inlet0.objectNumber);				
+				Pair tmp = comingSourcesToInlet0.get(0);
+				inlet0 = createObject_setOutput(tmp.objectNumber, tmp.outletNumber);	
 			}
 			
-			//Collect objects coming into inlet 1
-			List<Pair> comingSourcesToInlet1 = pdObject.objectInlets.get(1);
-			Pair inlet1=null;
-			if(comingSourcesToInlet1 !=null){
-				//TODO actually -> taking only the first object coming into inlet 0
-				// expected -> should take all objects coming into inlet 0
-				inlet1 = comingSourcesToInlet1.get(0);
+			for (int i = 0; i < outputs.size(); i++) {
+				pdObject.outputs.put(i, outputs.get(i));
 			}
-			
-			
-			String coming_into_inlet1 = null;
-			if(inlet1 != null){
-				//Create the object coming into current PDObject and get its output 
-				coming_into_inlet1 = createObject_setOutput(inlet1.objectNumber, inlet1.objectNumber);
-				pdObject.defaultVal = coming_into_inlet1; // this expression violates the cold inlet mechanism
-			}
-			
-			this.definitions.put(objectNumber, String.format("checkbox%s=checkbox(\"%s\");\n"
-															+ "msg%s = checkbox%s * %s;", objectNumber,pdObject.args.get(0),objectNumber,objectNumber,pdObject.args.get(0)));
-			
-			String output_on_outlet0 = String.format("(msg%s)",objectNumber);
-			pdObject.outputs.put(outletNumber, output_on_outlet0);
 			
 			//return with respect to outlet number -> return what outletNumber is expected to return
-			return output_on_outlet0;
+			return outputs.get(outletNumber);
 		}
 		else{
 			return "UIO";	
