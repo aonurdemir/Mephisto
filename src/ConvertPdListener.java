@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.antlr.v4.runtime.TokenStream;
+
 //tracked version
 public class ConvertPdListener extends RowsBaseListener {
 	class Pair{
@@ -71,7 +73,14 @@ public class ConvertPdListener extends RowsBaseListener {
 		this.pdObjects = new HashMap<Integer,PDObject>();
 		this.definitions = new HashMap<Integer, String>();
 	}
-
+	
+//	@Override
+//	public void exitExpr(RowsParser.ExprContext ctx){
+//		TokenStream tokens = parser.getTokenStream();
+//		System.out.println(tokens.getText(ctx));
+//
+//	}
+	
 	@Override
 	public void enterFile(RowsParser.FileContext ctx){
 		//		System.out.println("row:"+ctx.row().getText());
@@ -145,17 +154,15 @@ public class ConvertPdListener extends RowsBaseListener {
 		if(pdObject.name.equalsIgnoreCase("'osc~'")){
 			//TODO Implement inlet1
 			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
-			Pair inlet0=null;
+			String inlet0="";
 			if(comingSourcesToInlet0 !=null){
-				inlet0 = comingSourcesToInlet0.get(0);         
-			}					
-			
-			//Create the object coming into current PDObject's inlet and get its output
-			String coming_into_inlet0 = null;
-			if(inlet0 != null){
-				coming_into_inlet0 = createObject_setOutput(inlet0.objectNumber, inlet0.outletNumber);
-				pdObject.defaultVal = coming_into_inlet0;
-			}
+				for (int i = 0; i < comingSourcesToInlet0.size(); i++) {
+					Pair tmp = comingSourcesToInlet0.get(i);
+					inlet0 += createObject_setOutput(tmp.objectNumber, tmp.outletNumber) + "+";
+				}
+				inlet0 = inlet0.substring(0, inlet0.length()-1);
+				pdObject.defaultVal = inlet0;
+			}		
 			
 			String output_on_outlet0 = String.format("osc%s", objectNumber);
 			
@@ -423,10 +430,9 @@ public class ConvertPdListener extends RowsBaseListener {
 			for(int i=0; i<pdObject.args.size(); i++){
 				outputs.add("0");
 				if(pdObject.args.get(i).equalsIgnoreCase("b")||pdObject.args.get(i).equalsIgnoreCase("bang")){
-					outputs.set(i, "trigger"+objectNumber);
+					outputs.set(i, String.format("t%sbang",objectNumber));
 					bang = true;
-				}
-				
+				}			
 			}
 			if(bang==true){
 				this.definitions.put(objectNumber,String.format("t%sbang = checkbox(\"t%sbang\");", objectNumber,objectNumber));
@@ -446,7 +452,24 @@ public class ConvertPdListener extends RowsBaseListener {
 			}
 			
 			//return with respect to outlet number -> return what outletNumber is expected to return
-			return outputs.get(outletNumber);
+			return pdObject.outputs.get(outletNumber);
+		}
+		else if(pdObject.name.equalsIgnoreCase("'bng'")){
+			//Collect objects coming into inlet 0
+			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
+			String inlet0="";
+			this.definitions.put(objectNumber,String.format("bang%s = checkbox(\"bang%s\");", objectNumber,objectNumber));
+			if(comingSourcesToInlet0 !=null){
+				//TODO actually -> taking only the first object coming into inlet 0
+				// expected -> should take all objects coming into inlet 0
+				Pair tmp = comingSourcesToInlet0.get(0);
+				inlet0 = createObject_setOutput(tmp.objectNumber, tmp.outletNumber);
+			}
+			String output_on_outlet0 = String.format("bang%s", objectNumber);
+			return output_on_outlet0;
+			
+			
+			
 		}
 		else{
 			return "UIO";	
@@ -526,6 +549,10 @@ public class ConvertPdListener extends RowsBaseListener {
 				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.TRIGGER],args));
 				objNo++;				
 			}
+			else if(ctx.name.getType() == RowsParser.BANG){
+				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.BANG]));
+				objNo++;				
+			}
 		}
 		
 		else if(ctx.type.getType() == RowsParser.FLOATATOM){
@@ -554,6 +581,7 @@ public class ConvertPdListener extends RowsBaseListener {
 			pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.MSG],args));
 			objNo++;
 		}
+		
 		
 
 	}
