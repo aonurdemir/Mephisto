@@ -9,7 +9,7 @@
 #X obj 255 268 osc~;
 #X obj 253 223 + 440;
 #X obj 194 78 trigger b b b b;
-#X floatatom 170 19 5 0 0 0 - - -;
+#X floatatom 170 25 5 0 0 0 - - -;
 #X connect 1 0 5 0;
 #X connect 2 0 5 1;
 #X connect 3 0 6 0;

@@ -29,6 +29,19 @@ public class RowsBaseListener implements RowsListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterExpr(@NotNull RowsParser.ExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExpr(@NotNull RowsParser.ExprContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterRow(@NotNull RowsParser.RowContext ctx) { }
 	/**
 	 * {@inheritDoc}

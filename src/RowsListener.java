@@ -19,6 +19,17 @@ public interface RowsListener extends ParseTreeListener {
 	void exitFile(@NotNull RowsParser.FileContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link RowsParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpr(@NotNull RowsParser.ExprContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RowsParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpr(@NotNull RowsParser.ExprContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link RowsParser#row}.
 	 * @param ctx the parse tree
 	 */
