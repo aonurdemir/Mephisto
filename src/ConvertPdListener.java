@@ -281,18 +281,15 @@ public class ConvertPdListener extends RowsBaseListener {
 		else if(pdObject.name.equalsIgnoreCase("MULTIPLY")){
 			//Collect objects coming into inlet 0
 			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
-			Pair inlet0=null;
+			String inlet0="(";
 			if(comingSourcesToInlet0 !=null){
-				//TODO actually -> taking only the first object coming into inlet 0
-				// expected -> should take all objects coming into inlet 0
-				inlet0 = comingSourcesToInlet0.get(0);
+				for (int i = 0; i < comingSourcesToInlet0.size(); i++) {
+					Pair tmp = comingSourcesToInlet0.get(i);
+					inlet0 += createObject_setOutput(tmp.objectNumber, tmp.outletNumber) + "+";
+				}
+				inlet0 = inlet0.substring(0, inlet0.length()-1);
+				inlet0 += ")";
 			}		
-			
-			String coming_into_inlet0 = null;
-			if(inlet0 != null){
-				//Create the object coming into current PDObject and get its output 
-				coming_into_inlet0 = createObject_setOutput(inlet0.objectNumber, inlet0.outletNumber);				
-			}
 			
 			//Collect objects coming into inlet 1
 			List<Pair> comingSourcesToInlet1 = pdObject.objectInlets.get(1);
@@ -308,11 +305,11 @@ public class ConvertPdListener extends RowsBaseListener {
 			}
 			
 			
-			String output_on_outlet0 = String.format("(%s*%s)",coming_into_inlet0,pdObject.defaultVal);
+			String output_on_outlet0 = String.format("(%s*%s)",inlet0,pdObject.defaultVal);
 			pdObject.outputs.put(outletNumber, output_on_outlet0);
 			
 			//return with respect to outlet number -> return what outletNumber is expected to return
-			return output_on_outlet0;
+			return pdObject.outputs.get(outletNumber);
 		}
 		else if(pdObject.name.equalsIgnoreCase("DIVIDE")){
 			//Collect objects coming into inlet 0
