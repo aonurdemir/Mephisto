@@ -29,17 +29,21 @@ public class ConvertPdListener extends RowsBaseListener {
 		//List<Pair> -> [{0,0}, {1,0}] means 0th object's 0th outlet and 1st object's 0th outlet are coming into this PDObject's inlet
 		Map<Integer,List<Pair>> objectInlets;  
 		Map<Integer,String> outputs;
+		Map<Integer,String> outputTypes;
 		public PDObject(String name,String defaultVal){
 			this.name = name;
 			this.defaultVal = defaultVal;
 			this.objectInlets = new HashMap<Integer,List<Pair>>();
 			this.outputs = new HashMap<Integer,String>();
+			this.outputTypes = new HashMap<Integer,String>();
+			
 		}
 		public PDObject(String name){
 			this.name = name;
 			this.defaultVal = "no-default";
 			this.objectInlets = new HashMap<Integer,List<Pair>>();
 			this.outputs = new HashMap<Integer,String>();
+			this.outputTypes = new HashMap<Integer,String>();
 		}
 		public PDObject(String name,List<String> args){
 			this.name = name;
@@ -47,6 +51,7 @@ public class ConvertPdListener extends RowsBaseListener {
 			this.objectInlets = new HashMap<Integer,List<Pair>>();
 			this.outputs = new HashMap<Integer,String>();
 			this.args = args;
+			this.outputTypes = new HashMap<Integer,String>();
 		}
 		public String toString() {
 			return name + objectInlets.toString();
@@ -183,7 +188,11 @@ public class ConvertPdListener extends RowsBaseListener {
 					inlet0 +=  String.format("((1-checkbox%s)*number%s)+%s",tmp.objectNumber,objectNumber,objOut);
 				}
 				else{
-					inlet0 += createObject_setOutput(tmp.objectNumber, tmp.outletNumber);
+					String comingObjOutput = createObject_setOutput(tmp.objectNumber, tmp.outletNumber); 
+					if(obj.outputTypes.get(tmp.outletNumber).equalsIgnoreCase("float")){
+						
+					}
+					inlet0 += comingObjOutput; 
 				}
 				//inlet0 = createObject_setOutput(tmp.objectNumber, tmp.objectNumber);
 				
@@ -191,12 +200,13 @@ public class ConvertPdListener extends RowsBaseListener {
 			//IF NO COMING CONNECTION INTO INLET0
 			else{
 				inlet0 = String.format("number%s",objectNumber);
+				this.definitions.put(objectNumber, String.format("number%s=hslider(\"number %s\" ,440 ,0,4000,10);", objectNumber,objectNumber));
 			}
 			
 			String output_on_outlet0 = String.format("%s",inlet0);						
 			pdObject.outputs.put(outletNumber, output_on_outlet0);
 			//if(inlet0 == null){
-				this.definitions.put(objectNumber, String.format("number%s=hslider(\"number %s\" ,440 ,0,4000,10);", objectNumber,objectNumber));
+				
 			//}
 //			else{
 //				
@@ -307,7 +317,7 @@ public class ConvertPdListener extends RowsBaseListener {
 			
 			String output_on_outlet0 = String.format("(%s*%s)",inlet0,pdObject.defaultVal);
 			pdObject.outputs.put(outletNumber, output_on_outlet0);
-			
+			pdObject.outputTypes.put(outletNumber, "float");
 			//return with respect to outlet number -> return what outletNumber is expected to return
 			return pdObject.outputs.get(outletNumber);
 		}
