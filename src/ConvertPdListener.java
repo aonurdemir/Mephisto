@@ -206,6 +206,7 @@ public class ConvertPdListener extends RowsBaseListener {
 			
 			String output_on_outlet0 = String.format("%s",inlet0);						
 			pdObject.outputs.put(outletNumber, output_on_outlet0);
+			pdObject.outputTypes.put(0, "float");
 			//if(inlet0 == null){
 				
 			//}
@@ -226,7 +227,11 @@ public class ConvertPdListener extends RowsBaseListener {
 				for (int i = 0; i < comingSourcesToInlet0.size(); i++) {
 					Pair tmp = comingSourcesToInlet0.get(i);
 					String out = createObject_setOutput(tmp.objectNumber, tmp.outletNumber);
-					inlet0 += out + "+";
+					PDObject obj = pdObjects.get(tmp.objectNumber);
+					if(obj.outputTypes.get(tmp.outletNumber).equalsIgnoreCase("float")){
+						inlet0 += out + "+";
+					}
+					
 				}
 				inlet0 = inlet0.substring(0, inlet0.length()-1);
 			}		
@@ -439,6 +444,7 @@ public class ConvertPdListener extends RowsBaseListener {
 				outputs.add("0");
 				if(pdObject.args.get(i).equalsIgnoreCase("b")||pdObject.args.get(i).equalsIgnoreCase("bang")){
 					outputs.set(i, String.format("t%sbang",objectNumber));
+					pdObject.outputTypes.put(i, "bang");
 					bang = true;
 				}	
 				else if(pdObject.args.get(i).equalsIgnoreCase("f")||pdObject.args.get(i).equalsIgnoreCase("float")){
@@ -451,6 +457,7 @@ public class ConvertPdListener extends RowsBaseListener {
 						Pair tmp = comingSources.get(0);
 						inlet_0 = createObject_setOutput(tmp.objectNumber, tmp.outletNumber);
 						outputs.set(i, String.format("%s",inlet_0));
+						pdObject.outputTypes.put(i, "float");
 					}
 				}
 			}
