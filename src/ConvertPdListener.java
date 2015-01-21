@@ -187,11 +187,12 @@ public class ConvertPdListener extends RowsBaseListener {
 					String objOut = createObject_setOutput(tmp.objectNumber, tmp.outletNumber);
 					inlet0 +=  String.format("((1-checkbox%s)*number%s)+%s",tmp.objectNumber,objectNumber,objOut);
 				}
+				//if coming an input except for msg, ignore the floatatom element and pass the coming input as output
 				else{
 					String comingObjOutput = createObject_setOutput(tmp.objectNumber, tmp.outletNumber); 
-					if(obj.outputTypes.get(tmp.outletNumber).equalsIgnoreCase("float")){
-						
-					}
+//					if(obj.outputTypes.get(tmp.outletNumber).equalsIgnoreCase("float")){
+//						
+//					}
 					inlet0 += comingObjOutput; 
 				}
 				//inlet0 = createObject_setOutput(tmp.objectNumber, tmp.objectNumber);
@@ -439,19 +440,22 @@ public class ConvertPdListener extends RowsBaseListener {
 				if(pdObject.args.get(i).equalsIgnoreCase("b")||pdObject.args.get(i).equalsIgnoreCase("bang")){
 					outputs.set(i, String.format("t%sbang",objectNumber));
 					bang = true;
-				}			
+				}	
+				else if(pdObject.args.get(i).equalsIgnoreCase("f")||pdObject.args.get(i).equalsIgnoreCase("float")){
+					
+					List<Pair> comingSources = pdObject.objectInlets.get(0);
+					String inlet_0="";
+					if(comingSources !=null){
+						//TODO actually -> taking only the first object coming into inlet 0
+						// expected -> should take all objects coming into inlet 0
+						Pair tmp = comingSources.get(0);
+						inlet_0 = createObject_setOutput(tmp.objectNumber, tmp.outletNumber);
+						outputs.set(i, String.format("%s",inlet_0));
+					}
+				}
 			}
 			if(bang==true){
 				this.definitions.put(objectNumber,String.format("t%sbang = checkbox(\"t%sbang\");", objectNumber,objectNumber));
-			}
-			
-			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
-			String inlet0="";
-			if(comingSourcesToInlet0 !=null){
-				//TODO actually -> taking only the first object coming into inlet 0
-				// expected -> should take all objects coming into inlet 0
-				Pair tmp = comingSourcesToInlet0.get(0);
-				inlet0 = createObject_setOutput(tmp.objectNumber, tmp.outletNumber);	
 			}
 			
 			for (int i = 0; i < outputs.size(); i++) {

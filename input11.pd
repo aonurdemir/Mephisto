@@ -1,8 +1,6 @@
 #N canvas 1009 440 447 442 10;
-#X obj 101 74 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
-#X obj 174 76 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
--1;
+#X obj 101 74 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1 -1;
+#X obj 174 76 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1 -1;
 #X msg 69 113 440;
 #X msg 141 109 500;
 #X obj 69 154 osc~;
