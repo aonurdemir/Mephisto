@@ -1,0 +1,7 @@
+#N canvas 1142 405 624 300 10;
+#X obj 119 110 inlet a;
+#X obj 190 107 inlet d;
+#X obj 255 106 inlet sl;
+#X obj 324 113 inlet st;
+#X obj 390 114 r;
+#X msg 120 183 1 a \, sl d a \, 0 r a+d+st;

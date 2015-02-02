@@ -251,6 +251,7 @@ public class ConvertPdListener extends RowsBaseListener {
 						
 			String output_on_outlet0 = String.format("(%s+%s)",inlet0,pdObject.defaultVal);
 			pdObject.outputs.put(outletNumber, output_on_outlet0);
+			pdObject.outputTypes.put(outletNumber, "float");
 			
 			//return with respect to outlet number -> return what outletNumber is expected to return
 			return pdObject.outputs.get(outletNumber);
@@ -290,6 +291,7 @@ public class ConvertPdListener extends RowsBaseListener {
 			
 			String output_on_outlet0 = String.format("(%s-%s)",coming_into_inlet0,pdObject.defaultVal);
 			pdObject.outputs.put(outletNumber, output_on_outlet0);
+			pdObject.outputTypes.put(outletNumber, "float");
 			
 			//return with respect to outlet number -> return what outletNumber is expected to return
 			return output_on_outlet0;
@@ -430,7 +432,7 @@ public class ConvertPdListener extends RowsBaseListener {
 			}
 			
 			pdObject.outputs.put(outletNumber, output_on_outlet0);
-			
+			pdObject.outputTypes.put(outletNumber, "float");
 			//return with respect to outlet number -> return what outletNumber is expected to return
 			return output_on_outlet0;
 		}
@@ -503,8 +505,11 @@ public class ConvertPdListener extends RowsBaseListener {
 			if(ctx.name.getType() == RowsParser.OSC){
 				imports.add("import(\"music.lib\");");
 				String freq = "440";
-				if(ctx.INT(2) != null){
+				if(ctx.INT(2) != null){					
 					freq = ctx.INT(2).getText();
+				}
+				else if(ctx.FLOAT(0) != null){				
+					freq=ctx.FLOAT(0).getText();
 				}				
 				
 				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.OSC],freq));
@@ -521,40 +526,57 @@ public class ConvertPdListener extends RowsBaseListener {
 				String defaultVal = "0";
 				if(ctx.INT(2) != null){
 					defaultVal = ctx.INT(2).getText();
-				}		
+				}
+				else if(ctx.FLOAT(0) != null){
+					defaultVal=ctx.FLOAT(0).getText();
+				}
+			
+					
 				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.PLUS],defaultVal));
 				objNo++;
 			}
 			
 			else if(ctx.name.getType() == RowsParser.MINUS){
 				String defaultVal = "0";
-				if(ctx.INT(2) != null){
+				if(ctx.INT(2) != null){					
 					defaultVal = ctx.INT(2).getText();
+				}
+				else if(ctx.FLOAT(0) != null){				
+					defaultVal=ctx.FLOAT(0).getText();
 				}		
 				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.MINUS],defaultVal));
 				objNo++;
 			}
 			else if(ctx.name.getType() == RowsParser.MULTIPLY){
 				String defaultVal = "0";
-				if(ctx.INT(2) != null){
+				if(ctx.INT(2) != null){					
 					defaultVal = ctx.INT(2).getText();
-				}		
+				}
+				else if(ctx.FLOAT(0) != null){				
+					defaultVal=ctx.FLOAT(0).getText();
+				}	
 				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.MULTIPLY],defaultVal));
 				objNo++;
 			}
 			else if(ctx.name.getType() == RowsParser.DIVIDE){
 				String defaultVal = "0";
-				if(ctx.INT(2) != null){
+				if(ctx.INT(2) != null){					
 					defaultVal = ctx.INT(2).getText();
+				}
+				else if(ctx.FLOAT(0) != null){				
+					defaultVal=ctx.FLOAT(0).getText();
 				}		
 				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.DIVIDE],defaultVal));
 				objNo++;
 			}
 			else if(ctx.name.getType() == RowsParser.POW){
 				String defaultVal = "0";
-				if(ctx.INT(2) != null){
+				if(ctx.INT(2) != null){					
 					defaultVal = ctx.INT(2).getText();
-				}		
+				}
+				else if(ctx.FLOAT(0) != null){					
+					defaultVal=ctx.FLOAT(0).getText();
+				}	
 				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.POW],defaultVal));
 				objNo++;
 			}
@@ -569,6 +591,18 @@ public class ConvertPdListener extends RowsBaseListener {
 			}
 			else if(ctx.name.getType() == RowsParser.BANG){
 				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.BANG]));
+				objNo++;				
+			}
+			else if(ctx.name.getType() == RowsParser.SIG){
+				String defaultVal = "0";
+				
+				if(ctx.INT(2) != null){					
+					defaultVal = ctx.INT(2).getText();
+				}
+				else if(ctx.FLOAT(0) != null){				
+					defaultVal=ctx.FLOAT(0).getText();
+				}	
+				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.SIG],defaultVal));
 				objNo++;				
 			}
 		}
@@ -595,7 +629,13 @@ public class ConvertPdListener extends RowsBaseListener {
 		else if(ctx.type.getType() == RowsParser.MSG){
 			List<String> args = new ArrayList<String>();
 			//ignore canvas positions and get the first item in the message
-			args.add(ctx.INT(2).getText());
+			if(ctx.INT(2) != null){		
+				args.add(ctx.INT(2).getText());
+			}
+			else if(ctx.FLOAT(0) != null){
+				args.add(ctx.FLOAT(0).getText());
+			}
+			
 			pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.MSG],args));
 			objNo++;
 		}
