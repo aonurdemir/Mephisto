@@ -17,7 +17,7 @@ row:XOBJ type=CONNECT INT? INT? INT? INT? SEMICOLON NL
    |XOBJ type=OBJ INT INT name=EXPR expr SEMICOLON NL
    |XOBJ type=MSG INT INT (INT|FLOAT)* SEMICOLON NL
    |XOBJ type=OBJ INT INT name=METRO INT SEMICOLON NL
-   |XOBJ type=OBJ INT INT name=COUNTER SEMICOLON NL
+   |XOBJ type=OBJ INT INT name=FCOUNTER SEMICOLON NL
    |XOBJ type=OBJ INT INT name=MOD INT SEMICOLON NL
    |XOBJ type=OBJ INT INT name=SIG number=(INT|FLOAT)? SEMICOLON NL;
 
@@ -39,7 +39,7 @@ OSC: 'osc~';
 DAC: 'dac~';
 METRO: 'metro';
 MOD: 'mod';
-COUNTER: 'counter';
+FCOUNTER: 'fcounter';
 SIG: 'sig~';
 OBJ: 'obj';
 CANVAS: 'canvas';

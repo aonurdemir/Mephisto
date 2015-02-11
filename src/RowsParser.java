@@ -15,12 +15,12 @@ public class RowsParser extends Parser {
 		new PredictionContextCache();
 	public static final int
 		XOBJ=1, NOBJ=2, DIVIDE=3, MULTIPLY=4, MINUS=5, PLUS=6, EXPR=7, FLOATATOM=8, 
-		OSC=9, DAC=10, METRO=11, MOD=12, COUNTER=13, SIG=14, OBJ=15, CANVAS=16, 
+		OSC=9, DAC=10, METRO=11, MOD=12, FCOUNTER=13, SIG=14, OBJ=15, CANVAS=16, 
 		CONNECT=17, MSG=18, POW=19, INT=20, FLOAT=21, DIGIT=22, TRIGGER=23, BANG=24, 
 		VAR=25, STRING=26, SEMICOLON=27, LPAREN=28, RPAREN=29, TAB=30, NL=31;
 	public static final String[] tokenNames = {
 		"<INVALID>", "'#X'", "'#N'", "DIVIDE", "MULTIPLY", "MINUS", "PLUS", "'expr'", 
-		"'floatatom'", "'osc~'", "'dac~'", "'metro'", "'mod'", "'counter'", "'sig~'", 
+		"'floatatom'", "'osc~'", "'dac~'", "'metro'", "'mod'", "'fcounter'", "'sig~'", 
 		"'obj'", "'canvas'", "'connect'", "'msg'", "'pow'", "INT", "FLOAT", "DIGIT", 
 		"'trigger'", "'bng'", "VAR", "STRING", "';'", "'('", "')'", "TAB", "NL"
 	};
@@ -147,10 +147,10 @@ public class RowsParser extends Parser {
 		public TerminalNode MINUS(int i) {
 			return getToken(RowsParser.MINUS, i);
 		}
-		public TerminalNode COUNTER() { return getToken(RowsParser.COUNTER, 0); }
 		public TerminalNode NOBJ() { return getToken(RowsParser.NOBJ, 0); }
 		public TerminalNode DAC() { return getToken(RowsParser.DAC, 0); }
 		public TerminalNode CONNECT() { return getToken(RowsParser.CONNECT, 0); }
+		public TerminalNode FCOUNTER() { return getToken(RowsParser.FCOUNTER, 0); }
 		public List<TerminalNode> STRING() { return getTokens(RowsParser.STRING); }
 		public TerminalNode MOD() { return getToken(RowsParser.MOD, 0); }
 		public TerminalNode POW() { return getToken(RowsParser.POW, 0); }
@@ -621,7 +621,7 @@ public class RowsParser extends Parser {
 				setState(203); ((RowContext)_localctx).type = match(OBJ);
 				setState(204); match(INT);
 				setState(205); match(INT);
-				setState(206); ((RowContext)_localctx).name = match(COUNTER);
+				setState(206); ((RowContext)_localctx).name = match(FCOUNTER);
 				setState(207); match(SEMICOLON);
 				setState(208); match(NL);
 				}

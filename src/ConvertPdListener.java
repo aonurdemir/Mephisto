@@ -488,8 +488,74 @@ public class ConvertPdListener extends RowsBaseListener {
 			String output_on_outlet0 = String.format("bang%s", objectNumber);
 			return output_on_outlet0;
 			
+		}
+		else if(pdObject.name.equalsIgnoreCase("'fcounter'")){
+			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
+			String inlet0="";
+			if(comingSourcesToInlet0 !=null){
+				Pair tmp = comingSourcesToInlet0.get(0);
+				String comingObjOutput = createObject_setOutput(tmp.objectNumber, tmp.outletNumber); 
+				inlet0 += comingObjOutput; 
+			}
+			this.definitions.put(objectNumber,String.format("metro%s(nn) = int((+(1)~_)/((nn/1000)*SR));",objectNumber));
+			String output_on_outlet0 = String.format("metro%s(%s)",objectNumber,inlet0);						
+			pdObject.outputs.put(outletNumber, output_on_outlet0);
+			pdObject.outputTypes.put(0, "float");		
+			return output_on_outlet0;					
+		}
+		else if(pdObject.name.equalsIgnoreCase("'mod'")){
+			//Collect objects coming into inlet 0
+			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
+			String inlet0="";
+			if(comingSourcesToInlet0 !=null){
+				Pair tmp = comingSourcesToInlet0.get(0);
+				inlet0 += createObject_setOutput(tmp.objectNumber, tmp.outletNumber);				
+			}		
 			
+			//Collect objects coming into inlet 1
+			List<Pair> comingSourcesToInlet1 = pdObject.objectInlets.get(1);
+			String inlet1=null;
+			if(comingSourcesToInlet1 !=null){
+				Pair tmp =comingSourcesToInlet1.get(0);
+				inlet1 += createObject_setOutput(tmp.objectNumber, tmp.outletNumber);
+				pdObject.defaultVal = inlet1;
+			}
 			
+			String output_on_outlet0 = String.format("(%s%s%s)",inlet0,"%",pdObject.defaultVal);
+			pdObject.outputs.put(outletNumber, output_on_outlet0);
+			pdObject.outputTypes.put(0, "float");		
+			//return with respect to outlet number -> return what outletNumber is expected to return
+			return output_on_outlet0;
+		}
+		else if(pdObject.name.equalsIgnoreCase("'sig~'")){
+			//Collect objects coming into inlet 0
+			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
+			String inlet0="";
+			if(comingSourcesToInlet0 !=null){
+				Pair tmp = comingSourcesToInlet0.get(0);
+				inlet0 += createObject_setOutput(tmp.objectNumber, tmp.outletNumber);				
+			}		
+			
+			//Collect objects coming into inlet 1
+			List<Pair> comingSourcesToInlet1 = pdObject.objectInlets.get(1);
+			String inlet1="";
+			if(comingSourcesToInlet1 !=null){
+				Pair obj = comingSourcesToInlet1.get(0);
+				inlet1 += createObject_setOutput(obj.objectNumber, obj.outletNumber);
+				pdObject.defaultVal = inlet1;
+			}
+			String output_on_outlet0; 
+			if(inlet0.equalsIgnoreCase("")){
+				output_on_outlet0 = String.format("%s",pdObject.defaultVal);	
+			}
+			else{
+				output_on_outlet0 = String.format("%s",inlet0);
+			}
+			
+			pdObject.outputs.put(outletNumber, output_on_outlet0);
+			pdObject.outputTypes.put(outletNumber, "float");
+			//return with respect to outlet number -> return what outletNumber is expected to return
+			return pdObject.outputs.get(outletNumber);
 		}
 		else{
 			return "UIO";	
@@ -593,9 +659,12 @@ public class ConvertPdListener extends RowsBaseListener {
 				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.BANG]));
 				objNo++;				
 			}
+			else if(ctx.name.getType() == RowsParser.FCOUNTER){
+				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.FCOUNTER]));
+				objNo++;				
+			}
 			else if(ctx.name.getType() == RowsParser.SIG){
-				String defaultVal = "0";
-				
+				String defaultVal = "0";				
 				if(ctx.INT(2) != null){					
 					defaultVal = ctx.INT(2).getText();
 				}
@@ -604,6 +673,17 @@ public class ConvertPdListener extends RowsBaseListener {
 				}	
 				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.SIG],defaultVal));
 				objNo++;				
+			}
+			else if(ctx.name.getType() == RowsParser.MOD){
+				String defaultVal = "1";
+				if(ctx.INT(2) != null){					
+					defaultVal = ctx.INT(2).getText();
+				}
+				else if(ctx.FLOAT(0) != null){					
+					defaultVal=ctx.FLOAT(0).getText();
+				}	
+				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.MOD],defaultVal));
+				objNo++;
 			}
 		}
 		
