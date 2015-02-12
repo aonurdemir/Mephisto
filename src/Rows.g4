@@ -19,13 +19,17 @@ row:XOBJ type=CONNECT INT? INT? INT? INT? SEMICOLON NL
    |XOBJ type=OBJ INT INT name=METRO INT SEMICOLON NL
    |XOBJ type=OBJ INT INT name=FCOUNTER SEMICOLON NL
    |XOBJ type=OBJ INT INT name=MOD INT SEMICOLON NL
+   |XOBJ type=OBJ INT INT name=CLIP expr expr SEMICOLON NL
+   |XOBJ type=OBJ INT INT name=BP expr expr SEMICOLON NL
+   |XOBJ type=OBJ INT INT name=HIP expr? SEMICOLON NL
    |XOBJ type=OBJ INT INT name=SIG number=(INT|FLOAT)? SEMICOLON NL;
 
-expr: (INT|VAR)
-    |expr (MULTIPLY|DIVIDE) expr
-    |expr (PLUS|MINUS) expr
-    |MINUS expr
-    |LPAREN expr RPAREN;
+expr: (INT|FLOAT|VAR)               #Single
+    |expr (MULTIPLY|DIVIDE) expr    #MulDiv
+    |expr (PLUS|MINUS) expr         #Single
+    |MINUS expr                     #Minus
+    |LPAREN expr RPAREN             #Paren
+    ;
 
 XOBJ: '#X';
 NOBJ: '#N';
@@ -41,6 +45,9 @@ METRO: 'metro';
 MOD: 'mod';
 FCOUNTER: 'fcounter';
 SIG: 'sig~';
+CLIP: 'clip~';
+BP: 'bp~';
+HIP: 'hip~';
 OBJ: 'obj';
 CANVAS: 'canvas';
 CONNECT: 'connect';

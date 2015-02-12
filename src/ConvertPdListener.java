@@ -138,7 +138,10 @@ public class ConvertPdListener extends RowsBaseListener {
 		
 		//PRINT FAUST PROGRAM TREE
 		if(imports.size() > 0){
-			System.out.println(imports.get(0));
+			for(int i=0; i<imports.size(); i++){
+				System.out.println(imports.get(i));	
+			}
+			
 		}
 		
 		Iterator<Entry<Integer, String>> it = this.definitions.entrySet().iterator();
@@ -172,6 +175,7 @@ public class ConvertPdListener extends RowsBaseListener {
 			String output_on_outlet0 = String.format("osc%s", objectNumber);
 			
 			pdObject.outputs.put(outletNumber,output_on_outlet0);
+			pdObject.outputTypes.put(outletNumber, "float");
 			
 			this.definitions.put(objectNumber, String.format("osc%s=osc(%s);", objectNumber,pdObject.defaultVal));
 			return output_on_outlet0;
@@ -557,6 +561,70 @@ public class ConvertPdListener extends RowsBaseListener {
 			//return with respect to outlet number -> return what outletNumber is expected to return
 			return pdObject.outputs.get(outletNumber);
 		}
+		else if(pdObject.name.equalsIgnoreCase("'clip~'")){
+			//Collect objects coming into inlet 0
+			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
+			String inlet0="";
+			if(comingSourcesToInlet0 !=null){
+				Pair tmp = comingSourcesToInlet0.get(0);
+				inlet0 += createObject_setOutput(tmp.objectNumber, tmp.outletNumber);				
+			}
+			imports.add("import(\"math.lib\");");
+			this.definitions.put(objectNumber,String.format("clip%s(s) = if (s < (%s),  (%s) , if ( s>%s ,%s ,s) );",objectNumber,pdObject.args.get(0),pdObject.args.get(0),
+					pdObject.args.get(1),pdObject.args.get(1)));
+			
+
+			String output_on_outlet0;
+			output_on_outlet0 = String.format("clip%s(%s)",objectNumber,inlet0);
+			
+			
+			pdObject.outputs.put(outletNumber, output_on_outlet0);
+			pdObject.outputTypes.put(outletNumber, "float");
+			//return with respect to outlet number -> return what outletNumber is expected to return
+			return pdObject.outputs.get(outletNumber);
+		}
+		else if(pdObject.name.equalsIgnoreCase("'bp~'")){
+			//Collect objects coming into inlet 0
+			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
+			String inlet0="";
+			if(comingSourcesToInlet0 !=null){
+				Pair tmp = comingSourcesToInlet0.get(0);
+				inlet0 += createObject_setOutput(tmp.objectNumber, tmp.outletNumber);				
+			}		
+			imports.add("import(\"filter.lib\");");
+			
+			String output_on_outlet0;
+			output_on_outlet0 = String.format("resonbp(%s,%s,%s,%s)",pdObject.args.get(0),pdObject.args.get(1),"1",inlet0);
+			
+			
+			pdObject.outputs.put(outletNumber, output_on_outlet0);
+			pdObject.outputTypes.put(outletNumber, "float");
+			//return with respect to outlet number -> return what outletNumber is expected to return
+			return pdObject.outputs.get(outletNumber);
+		}
+		else if(pdObject.name.equalsIgnoreCase("'hip~'")){
+			//Collect objects coming into inlet 0
+			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
+			String inlet0="(";
+			if(comingSourcesToInlet0 !=null){
+				for(int i=0; i<comingSourcesToInlet0.size(); i++){
+					Pair pair = comingSourcesToInlet0.get(i);
+		        	inlet0 += createObject_setOutput(pair.objectNumber,pair.outletNumber) + "+";
+				}
+				inlet0 = inlet0.substring(0, inlet0.length()-1);
+				inlet0 +=")";
+			}		
+			imports.add("import(\"filter.lib\");");
+			
+			String output_on_outlet0;
+			output_on_outlet0 = String.format("resonhp(%s,%s,%s,%s)",pdObject.defaultVal,"10","1",inlet0);
+			
+			
+			pdObject.outputs.put(outletNumber, output_on_outlet0);
+			pdObject.outputTypes.put(outletNumber, "float");
+			//return with respect to outlet number -> return what outletNumber is expected to return
+			return pdObject.outputs.get(outletNumber);
+		}
 		else{
 			return "UIO";	
 		}
@@ -685,6 +753,28 @@ public class ConvertPdListener extends RowsBaseListener {
 				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.MOD],defaultVal));
 				objNo++;
 			}
+			else if(ctx.name.getType() == RowsParser.CLIP){
+				List<String> args = new ArrayList<String>();
+				args.add(ctx.expr(0).getText());
+				args.add(ctx.expr(1).getText());
+				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.CLIP],args));
+				objNo++;
+			}
+			else if(ctx.name.getType() == RowsParser.BP){
+				List<String> args = new ArrayList<String>();
+				args.add(ctx.expr(0).getText());
+				args.add(ctx.expr(1).getText());
+				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.BP],args));
+				objNo++;
+			}
+			else if(ctx.name.getType() == RowsParser.HIP){
+				String defaultVal = "0";
+				if(ctx.expr(0) != null){					
+					defaultVal = ctx.expr(0).getText();
+				}				
+				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.HIP],defaultVal));
+				objNo++;
+			}
 		}
 		
 		else if(ctx.type.getType() == RowsParser.FLOATATOM){
@@ -723,5 +813,6 @@ public class ConvertPdListener extends RowsBaseListener {
 		
 
 	}
+
 }
 

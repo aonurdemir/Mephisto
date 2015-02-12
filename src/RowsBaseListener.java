@@ -16,6 +16,19 @@ public class RowsBaseListener implements RowsListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterMinus(@NotNull RowsParser.MinusContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMinus(@NotNull RowsParser.MinusContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterFile(@NotNull RowsParser.FileContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -29,13 +42,13 @@ public class RowsBaseListener implements RowsListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpr(@NotNull RowsParser.ExprContext ctx) { }
+	@Override public void enterParen(@NotNull RowsParser.ParenContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpr(@NotNull RowsParser.ExprContext ctx) { }
+	@Override public void exitParen(@NotNull RowsParser.ParenContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -49,6 +62,32 @@ public class RowsBaseListener implements RowsListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitRow(@NotNull RowsParser.RowContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSingle(@NotNull RowsParser.SingleContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSingle(@NotNull RowsParser.SingleContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMulDiv(@NotNull RowsParser.MulDivContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMulDiv(@NotNull RowsParser.MulDivContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

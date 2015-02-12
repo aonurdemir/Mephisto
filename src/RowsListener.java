@@ -8,6 +8,17 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface RowsListener extends ParseTreeListener {
 	/**
+	 * Enter a parse tree produced by {@link RowsParser#Minus}.
+	 * @param ctx the parse tree
+	 */
+	void enterMinus(@NotNull RowsParser.MinusContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RowsParser#Minus}.
+	 * @param ctx the parse tree
+	 */
+	void exitMinus(@NotNull RowsParser.MinusContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link RowsParser#file}.
 	 * @param ctx the parse tree
 	 */
@@ -19,15 +30,15 @@ public interface RowsListener extends ParseTreeListener {
 	void exitFile(@NotNull RowsParser.FileContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link RowsParser#expr}.
+	 * Enter a parse tree produced by {@link RowsParser#Paren}.
 	 * @param ctx the parse tree
 	 */
-	void enterExpr(@NotNull RowsParser.ExprContext ctx);
+	void enterParen(@NotNull RowsParser.ParenContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link RowsParser#expr}.
+	 * Exit a parse tree produced by {@link RowsParser#Paren}.
 	 * @param ctx the parse tree
 	 */
-	void exitExpr(@NotNull RowsParser.ExprContext ctx);
+	void exitParen(@NotNull RowsParser.ParenContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link RowsParser#row}.
@@ -39,4 +50,26 @@ public interface RowsListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitRow(@NotNull RowsParser.RowContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link RowsParser#Single}.
+	 * @param ctx the parse tree
+	 */
+	void enterSingle(@NotNull RowsParser.SingleContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RowsParser#Single}.
+	 * @param ctx the parse tree
+	 */
+	void exitSingle(@NotNull RowsParser.SingleContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link RowsParser#MulDiv}.
+	 * @param ctx the parse tree
+	 */
+	void enterMulDiv(@NotNull RowsParser.MulDivContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RowsParser#MulDiv}.
+	 * @param ctx the parse tree
+	 */
+	void exitMulDiv(@NotNull RowsParser.MulDivContext ctx);
 }
