@@ -1,3 +1,6 @@
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -58,6 +61,7 @@ public class ConvertPdListener extends RowsBaseListener {
 		}
 	}
 	
+	String fileName;
 	RowsParser parser;
 	List<String> imports;
 	List<String> exps;
@@ -70,7 +74,8 @@ public class ConvertPdListener extends RowsBaseListener {
 	
 
 
-	public ConvertPdListener(RowsParser parser) {
+	public ConvertPdListener(RowsParser parser,String fileName) {
+		this.fileName = fileName;
 		this.parser = parser;
 		this.imports = new ArrayList<String>();
 		this.exps = new ArrayList<String>();
@@ -90,12 +95,22 @@ public class ConvertPdListener extends RowsBaseListener {
 	public void enterFile(RowsParser.FileContext ctx){
 		//		System.out.println("row:"+ctx.row().getText());
 	}
-
+	PrintWriter writer;
 	@Override
 	public void exitFile(RowsParser.FileContext ctx) {
 		//System.out.println(imports);
 		//System.out.println(objects);
 		//System.out.println(pdObjects);
+		try {
+			writer = new PrintWriter(this.fileName.substring(0, this.fileName.length()-3)+".dsp", "UTF-8");
+			System.out.println("created successfully: " + this.fileName.substring(0, this.fileName.length()-3)+".dsp");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		PDObject dacObject = pdObjects.get(dacObjectNumber);
 		
 		//Pair inlet0 = dacObject.objectInlets.get(0);
@@ -139,7 +154,8 @@ public class ConvertPdListener extends RowsBaseListener {
 		//PRINT FAUST PROGRAM TREE
 		if(imports.size() > 0){
 			for(int i=0; i<imports.size(); i++){
-				System.out.println(imports.get(i));	
+				//System.out.println(imports.get(i));
+				writer.println(imports.get(i));
 			}
 			
 		}
@@ -147,11 +163,14 @@ public class ConvertPdListener extends RowsBaseListener {
 		Iterator<Entry<Integer, String>> it = this.definitions.entrySet().iterator();
 	    while (it.hasNext()) {	        
 			Entry<Integer, String> pairs = it.next();
-	        System.out.println(pairs.getValue());
+	        //System.out.println(pairs.getValue());
+			writer.println(pairs.getValue());
 	        it.remove(); // avoids a ConcurrentModificationException //REMOVES ALSO FROM HASH TABLE
 	    }
 	    
-		System.out.println(process);
+		//System.out.println(process);
+	    writer.println(process);
+	    writer.close();
 	}
 	
 	//Creates the object with given objectNumber and sets the numbered outlet output

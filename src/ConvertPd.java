@@ -14,7 +14,7 @@ public class ConvertPd {
 		RowsParser parser = new RowsParser(tokens);
 		ParseTree tree = parser.file(); // parse
 		ParseTreeWalker walker = new ParseTreeWalker(); // create standard walker
-		ConvertPdListener extractor = new ConvertPdListener(parser);
+		ConvertPdListener extractor = new ConvertPdListener(parser,inputFile);
 		walker.walk(extractor, tree); // initiate walk of tree with listener
 		
 	}  
