@@ -1,4 +1,4 @@
-#N canvas 802 588 450 300 10;
+#N canvas 798 598 450 300 10;
 #X obj 238 108 inlet ms;
 #X obj 210 156 metro;
 #X obj 168 117 loadbang;
