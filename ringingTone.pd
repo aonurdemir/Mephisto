@@ -1,4 +1,4 @@
-#N canvas 1206 195 450 762 10;
+#N canvas 1384 183 450 762 10;
 #X obj 141 101 fcounter;
 #X msg 148 55 1000;
 #X obj 139 132 mod 6;
@@ -15,11 +15,11 @@
 #X obj 117 395 bp~ 2000 12;
 #X obj 76 432 *~ 0.5;
 #X obj 146 431 clip~ -0.4 0.4;
-#X obj 78 471 bp~ 4000 3;
 #X obj 162 470 *~ 0.15;
 #X obj 130 512 hip~ 90;
 #X obj 126 556 hip~ 90;
 #X obj 127 597 dac~;
+#X obj 78 471 bp~ 400 3;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 2 0 3 0;
@@ -35,9 +35,9 @@
 #X connect 12 0 13 0;
 #X connect 13 0 15 0;
 #X connect 13 0 14 0;
-#X connect 14 0 16 0;
-#X connect 15 0 17 0;
-#X connect 16 0 18 0;
+#X connect 14 0 20 0;
+#X connect 15 0 16 0;
+#X connect 16 0 17 0;
 #X connect 17 0 18 0;
 #X connect 18 0 19 0;
-#X connect 19 0 20 0;
+#X connect 20 0 17 0;
