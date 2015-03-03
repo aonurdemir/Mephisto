@@ -24,7 +24,10 @@ row:XOBJ type=CONNECT INT? INT? INT? INT? SEMICOLON NL
    |XOBJ type=OBJ INT INT name=HIP expr? SEMICOLON NL
    |XOBJ type=OBJ INT INT name=LOP expr? SEMICOLON NL
    |XOBJ type=OBJ INT INT name=GT expr? SEMICOLON NL
+   |XOBJ type=OBJ INT INT name=LINE SEMICOLON NL
+   |XOBJ type=OBJ INT INT name=UNPACK (INT|FLOAT|STRING)+ SEMICOLON NL
    |XOBJ type=OBJ INT INT name=SIG number=(INT|FLOAT)? SEMICOLON NL;
+
 
 expr: (INT|FLOAT|VAR)               #Single
     |expr (MULTIPLY|DIVIDE) expr    #MulDiv
@@ -57,6 +60,8 @@ CANVAS: 'canvas';
 CONNECT: 'connect';
 MSG: 'msg';
 POW: 'pow';
+LINE: 'line~';
+UNPACK: 'unpack';
 
 INT: DIGIT+;
 FLOAT: DIGIT+ '.' DIGIT*;
