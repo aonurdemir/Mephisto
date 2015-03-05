@@ -692,6 +692,54 @@ public class ConvertPdListener extends RowsBaseListener {
 			//return with respect to outlet number -> return what outletNumber is expected to return
 			return output_on_outlet0;
 		}
+		else if(pdObject.name.equalsIgnoreCase("'<'")){
+			//Collect objects coming into inlet 0
+			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
+			String inlet0="";
+			if(comingSourcesToInlet0 !=null){
+				Pair tmp = comingSourcesToInlet0.get(0);
+				inlet0 += createObject_setOutput(tmp.objectNumber, tmp.outletNumber);				
+			}		
+			
+			//Collect objects coming into inlet 1
+			List<Pair> comingSourcesToInlet1 = pdObject.objectInlets.get(1);
+			String inlet1=null;
+			if(comingSourcesToInlet1 !=null){
+				Pair tmp =comingSourcesToInlet1.get(0);
+				inlet1 += createObject_setOutput(tmp.objectNumber, tmp.outletNumber);
+				pdObject.defaultVal = inlet1;
+			}
+			
+			String output_on_outlet0 = String.format("(%s<%s)",inlet0,pdObject.defaultVal);
+			pdObject.outputs.put(outletNumber, output_on_outlet0);
+			pdObject.outputTypes.put(0, "float");		
+			//return with respect to outlet number -> return what outletNumber is expected to return
+			return output_on_outlet0;
+		}
+		else if(pdObject.name.equalsIgnoreCase("'=='")){
+			//Collect objects coming into inlet 0
+			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
+			String inlet0="";
+			if(comingSourcesToInlet0 !=null){
+				Pair tmp = comingSourcesToInlet0.get(0);
+				inlet0 += createObject_setOutput(tmp.objectNumber, tmp.outletNumber);				
+			}		
+			
+			//Collect objects coming into inlet 1
+			List<Pair> comingSourcesToInlet1 = pdObject.objectInlets.get(1);
+			String inlet1=null;
+			if(comingSourcesToInlet1 !=null){
+				Pair tmp =comingSourcesToInlet1.get(0);
+				inlet1 += createObject_setOutput(tmp.objectNumber, tmp.outletNumber);
+				pdObject.defaultVal = inlet1;
+			}
+			
+			String output_on_outlet0 = String.format("(%s==%s)",inlet0,pdObject.defaultVal);
+			pdObject.outputs.put(outletNumber, output_on_outlet0);
+			pdObject.outputTypes.put(0, "float");		
+			//return with respect to outlet number -> return what outletNumber is expected to return
+			return output_on_outlet0;
+		}
 		else if(pdObject.name.equalsIgnoreCase("'metro'")){
 			//Collect objects coming into inlet 0
 			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
@@ -776,13 +824,45 @@ public class ConvertPdListener extends RowsBaseListener {
 				}
 						
 				
-			}
-			
-			
-			
-			
+			}	
 			//return with respect to outlet number -> return what outletNumber is expected to return
 			return pdObject.outputs.get(outletNumber);
+		}
+		else if(pdObject.name.equalsIgnoreCase("'phasor~'")){
+			//TODO Implement inlet1
+			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
+			String inlet0="";
+			if(comingSourcesToInlet0 !=null){
+				for (int i = 0; i < comingSourcesToInlet0.size(); i++) {
+					Pair tmp = comingSourcesToInlet0.get(i);
+					inlet0 += createObject_setOutput(tmp.objectNumber, tmp.outletNumber) + "+";
+				}
+				inlet0 = inlet0.substring(0, inlet0.length()-1);
+				pdObject.defaultVal = inlet0;
+			}		
+			
+			String output_on_outlet0 = String.format("sawtooth%s", objectNumber);
+			
+			pdObject.outputs.put(outletNumber,output_on_outlet0);
+			pdObject.outputTypes.put(outletNumber, "float");
+			
+			this.definitions.put(objectNumber, String.format("sawtooth%s=sawtooth(%s);", objectNumber,pdObject.defaultVal));
+			return output_on_outlet0;
+		}
+		else if(pdObject.name.equalsIgnoreCase("'cos~'")){
+			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
+			String inlet0="";
+			if(comingSourcesToInlet0 !=null){
+				Pair tmp = comingSourcesToInlet0.get(0);
+				String comingObjOutput = createObject_setOutput(tmp.objectNumber, tmp.outletNumber); 
+				inlet0 += comingObjOutput; 
+			}
+			imports.add("import(\"math.lib\");");
+			this.definitions.put(objectNumber,String.format("pi%s = 4*atan(1.0);\nA%s = 2*pi%s*%s/SR;",objectNumber,objectNumber,objectNumber,inlet0));
+			String output_on_outlet0 = String.format("cos(A%s)",objectNumber);						
+			pdObject.outputs.put(outletNumber, output_on_outlet0);
+			pdObject.outputTypes.put(0, "float");		
+			return output_on_outlet0;					
 		}
 		else{
 			return "UIO";	
@@ -950,6 +1030,22 @@ public class ConvertPdListener extends RowsBaseListener {
 				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.GT],defaultVal));
 				objNo++;
 			}
+			else if(ctx.name.getType() == RowsParser.LT){
+				String defaultVal = "0";
+				if(ctx.expr(0) != null){					
+					defaultVal = ctx.expr(0).getText();
+				}				
+				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.LT],defaultVal));
+				objNo++;
+			}
+			else if(ctx.name.getType() == RowsParser.EQ){
+				String defaultVal = "0";
+				if(ctx.expr(0) != null){					
+					defaultVal = ctx.expr(0).getText();
+				}				
+				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.EQ],defaultVal));
+				objNo++;
+			}
 			else if(ctx.name.getType() == RowsParser.METRO){
 				String defaultVal = "1000";
 				if(ctx.expr(0) != null){					
@@ -969,6 +1065,23 @@ public class ConvertPdListener extends RowsBaseListener {
 					args.add(ctx.getChild(i).toString());
 				}
 				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.UNPACK],args));
+				objNo++;
+			}
+			else if(ctx.name.getType() == RowsParser.PHASOR){
+				imports.add("import(\"oscillator.lib\");");
+				String freq = "440";
+				if(ctx.INT(2) != null){					
+					freq = ctx.INT(2).getText();
+				}
+				else if(ctx.FLOAT(0) != null){				
+					freq=ctx.FLOAT(0).getText();
+				}				
+				
+				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.PHASOR],freq));
+				objNo++;
+			}
+			else if(ctx.name.getType() == RowsParser.COS){
+				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.COS]));
 				objNo++;
 			}
 			else{

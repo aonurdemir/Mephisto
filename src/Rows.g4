@@ -4,6 +4,7 @@ grammar Rows;
 file: (row)+ ;
 row:XOBJ type=CONNECT INT? INT? INT? INT? SEMICOLON NL
    |XOBJ type=OBJ INT INT name=OSC INT? SEMICOLON NL
+   |XOBJ type=OBJ INT INT name=PHASOR INT? SEMICOLON NL
    |XOBJ type=OBJ INT INT name=DAC SEMICOLON NL
    |NOBJ type=CANVAS INT? INT? INT? INT? INT? SEMICOLON NL
    |XOBJ type=FLOATATOM INT? INT? INT? INT? INT? INT? MINUS MINUS MINUS SEMICOLON NL
@@ -24,8 +25,11 @@ row:XOBJ type=CONNECT INT? INT? INT? INT? SEMICOLON NL
    |XOBJ type=OBJ INT INT name=HIP expr? SEMICOLON NL
    |XOBJ type=OBJ INT INT name=LOP expr? SEMICOLON NL
    |XOBJ type=OBJ INT INT name=GT expr? SEMICOLON NL
+   |XOBJ type=OBJ INT INT name=LT expr? SEMICOLON NL
+   |XOBJ type=OBJ INT INT name=EQ expr? SEMICOLON NL
    |XOBJ type=OBJ INT INT name=LINE SEMICOLON NL
    |XOBJ type=OBJ INT INT name=UNPACK (INT|FLOAT|STRING)+ SEMICOLON NL
+   |XOBJ type=OBJ INT INT name=COS SEMICOLON NL
    |XOBJ type=OBJ INT INT name=SIG number=(INT|FLOAT)? SEMICOLON NL;
 
 
@@ -43,9 +47,12 @@ MULTIPLY: '*' | '*~';
 MINUS: '-' | '-~';
 PLUS: '+'| '+~';
 GT: '>';
+LT: '<';
+EQ: '==';
 EXPR: 'expr';
 FLOATATOM: 'floatatom';
 OSC: 'osc~';
+PHASOR: 'phasor~';
 DAC: 'dac~';
 METRO: 'metro';
 MOD: 'mod';
@@ -62,6 +69,7 @@ MSG: 'msg';
 POW: 'pow';
 LINE: 'line~';
 UNPACK: 'unpack';
+COS: 'cos~';
 
 INT: DIGIT+;
 FLOAT: DIGIT+ '.' DIGIT*;
