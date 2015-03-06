@@ -840,13 +840,13 @@ public class ConvertPdListener extends RowsBaseListener {
 				inlet0 = inlet0.substring(0, inlet0.length()-1);
 				pdObject.defaultVal = inlet0;
 			}		
-			
-			String output_on_outlet0 = String.format("sawtooth%s", objectNumber);
+			this.definitions.put(objectNumber, "phs(f) = +(1)~_ :%(44100/f): /(44100/f);\n");
+			String output_on_outlet0 = String.format("phs(%s)", pdObject.defaultVal);
 			
 			pdObject.outputs.put(outletNumber,output_on_outlet0);
 			pdObject.outputTypes.put(outletNumber, "float");
 			
-			this.definitions.put(objectNumber, String.format("sawtooth%s=sawtooth(%s);", objectNumber,pdObject.defaultVal));
+			//this.definitions.put(objectNumber, String.format("sawtooth%s=sawtooth(%s);", objectNumber,pdObject.defaultVal));
 			return output_on_outlet0;
 		}
 		else if(pdObject.name.equalsIgnoreCase("'cos~'")){
@@ -857,9 +857,8 @@ public class ConvertPdListener extends RowsBaseListener {
 				String comingObjOutput = createObject_setOutput(tmp.objectNumber, tmp.outletNumber); 
 				inlet0 += comingObjOutput; 
 			}
-			imports.add("import(\"math.lib\");");
-			this.definitions.put(objectNumber,String.format("pi%s = 4*atan(1.0);\nA%s = 2*pi%s*%s/SR;",objectNumber,objectNumber,objectNumber,inlet0));
-			String output_on_outlet0 = String.format("cos(A%s)",objectNumber);						
+			
+			String output_on_outlet0 = String.format("cos(2*PI*%s)",inlet0);						
 			pdObject.outputs.put(outletNumber, output_on_outlet0);
 			pdObject.outputTypes.put(0, "float");		
 			return output_on_outlet0;					
