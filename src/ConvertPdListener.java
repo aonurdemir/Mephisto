@@ -224,7 +224,7 @@ public class ConvertPdListener extends RowsBaseListener {
 			//IF NO COMING CONNECTION INTO INLET0
 			else{
 				inlet0 = String.format("number%s",objectNumber);
-				this.definitions.put(objectNumber, String.format("number%s=hslider(\"number %s\" ,440 ,0,4000,10);", objectNumber,objectNumber));
+				this.definitions.put(objectNumber, String.format("number%s=hslider(\"number %s\" ,0.5 ,0.1,1,0.1);", objectNumber,objectNumber));
 			}
 			
 			String output_on_outlet0 = String.format("%s",inlet0);						
@@ -583,10 +583,14 @@ public class ConvertPdListener extends RowsBaseListener {
 		else if(pdObject.name.equalsIgnoreCase("'clip~'")){
 			//Collect objects coming into inlet 0
 			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
-			String inlet0="";
+			String inlet0="(";
 			if(comingSourcesToInlet0 !=null){
-				Pair tmp = comingSourcesToInlet0.get(0);
-				inlet0 += createObject_setOutput(tmp.objectNumber, tmp.outletNumber);				
+				for(int i=0; i<comingSourcesToInlet0.size(); i++){
+					Pair pair = comingSourcesToInlet0.get(i);
+		        	inlet0 += createObject_setOutput(pair.objectNumber,pair.outletNumber) + "+";
+				}
+				inlet0 = inlet0.substring(0, inlet0.length()-1);
+				inlet0 +=")";
 			}
 			imports.add("import(\"math.lib\");");
 			this.definitions.put(objectNumber,String.format("clip%s(s) = if (s < (%s),  (%s) , if ( s>%s ,%s ,s) );",objectNumber,pdObject.args.get(0),pdObject.args.get(0),
@@ -658,7 +662,7 @@ public class ConvertPdListener extends RowsBaseListener {
 				inlet0 +=")";
 			}		
 			imports.add("import(\"filter.lib\");");
-			this.definitions.put(objectNumber, String.format("resonlp%s=resonlp(%s,%s,%s,%s);", objectNumber,pdObject.defaultVal,"10","1",inlet0));
+			this.definitions.put(objectNumber, String.format("resonlp%s=%s:lowpass(1,%s);", objectNumber,inlet0,pdObject.defaultVal));
 			String output_on_outlet0;
 			output_on_outlet0 = String.format("resonlp%s",objectNumber);
 			
@@ -859,6 +863,56 @@ public class ConvertPdListener extends RowsBaseListener {
 			}
 			
 			String output_on_outlet0 = String.format("cos(2*PI*%s)",inlet0);						
+			pdObject.outputs.put(outletNumber, output_on_outlet0);
+			pdObject.outputTypes.put(0, "float");		
+			return output_on_outlet0;					
+		}
+		else if(pdObject.name.equalsIgnoreCase("'noise~'")){
+			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
+			String inlet0="";
+			if(comingSourcesToInlet0 !=null){
+				Pair tmp = comingSourcesToInlet0.get(0);
+				String comingObjOutput = createObject_setOutput(tmp.objectNumber, tmp.outletNumber); 
+				inlet0 += comingObjOutput; 
+			}
+			
+			String output_on_outlet0 = String.format("noise",inlet0);						
+			pdObject.outputs.put(outletNumber, output_on_outlet0);
+			pdObject.outputTypes.put(0, "float");		
+			return output_on_outlet0;					
+		}
+		else if(pdObject.name.equalsIgnoreCase("'vcf~'")){
+			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
+			String inlet0="";
+			if(comingSourcesToInlet0 !=null){
+				Pair tmp = comingSourcesToInlet0.get(0);
+				String comingObjOutput = createObject_setOutput(tmp.objectNumber, tmp.outletNumber); 
+				inlet0 += comingObjOutput; 
+			}
+			
+			List<Pair> comingSourcesToInlet1 = pdObject.objectInlets.get(1);
+			String inlet1="";
+			if(comingSourcesToInlet1 !=null){
+				Pair tmp = comingSourcesToInlet1.get(0);
+				String comingObjOutput = createObject_setOutput(tmp.objectNumber, tmp.outletNumber); 
+				inlet1 += comingObjOutput; 
+			}
+			
+			List<Pair> comingSourcesToInlet2 = pdObject.objectInlets.get(2);
+			String inlet2="";
+			if(comingSourcesToInlet2 !=null){
+				Pair tmp = comingSourcesToInlet2.get(0);
+				String comingObjOutput = createObject_setOutput(tmp.objectNumber, tmp.outletNumber); 
+				inlet2 += comingObjOutput; 
+			}
+			this.definitions.put(objectNumber, "onepole(p) = *(1.0-(p)) : + ~ *(p);\n" + 
+			"moogvcf(mk,p) = (+ : onepole(p) : onepole(p) : onepole(p) : onepole(p)) ~ *(mk);\n" +
+			"mypole(fr) = 1.0-fr*2.0*PI/SR;\n");
+			
+
+			
+			
+			String output_on_outlet0 = String.format("(%s:moogvcf(%s,mypole(%s)))",inlet0,"-1*3.8",inlet1);						
 			pdObject.outputs.put(outletNumber, output_on_outlet0);
 			pdObject.outputTypes.put(0, "float");		
 			return output_on_outlet0;					
@@ -1081,6 +1135,18 @@ public class ConvertPdListener extends RowsBaseListener {
 			}
 			else if(ctx.name.getType() == RowsParser.COS){
 				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.COS]));
+				objNo++;
+			}
+			else if(ctx.name.getType() == RowsParser.VCF){
+				imports.add("import(\"effect.lib\");");
+				List<String> args = new ArrayList<String>();
+				args.add(ctx.expr(0).getText());
+				args.add(ctx.expr(1).getText());
+				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.VCF],args));
+				objNo++;
+			}
+			else if(ctx.name.getType() == RowsParser.NOISE){
+				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.NOISE]));
 				objNo++;
 			}
 			else{

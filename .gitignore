@@ -5,3 +5,7 @@ bin/
 /draft.dsp
 /*.dsp
 /Makefile*
+/jetengine.0.tmp-svg/
+/jackqtdirk/
+/jackqtdir/
+/draft.1.tmp-svg/
