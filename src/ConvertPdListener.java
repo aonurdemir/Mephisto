@@ -224,7 +224,15 @@ public class ConvertPdListener extends RowsBaseListener {
 			//IF NO COMING CONNECTION INTO INLET0
 			else{
 				inlet0 = String.format("number%s",objectNumber);
-				this.definitions.put(objectNumber, String.format("number%s=hslider(\"number %s\" ,0.5 ,0.1,1,0.1);", objectNumber,objectNumber));
+				String l = pdObject.args.get(0);
+				String u = pdObject.args.get(1);
+				if(Float.parseFloat(l) == 0){
+					l = "0";
+				}
+				if(Float.parseFloat(u) == 0){
+					u = "10000";
+				}
+				this.definitions.put(objectNumber, String.format("number%s=hslider(\"number %s\" ,1 ,%s,%s,0.1);", objectNumber,objectNumber,l,u));
 			}
 			
 			String output_on_outlet0 = String.format("%s",inlet0);						
@@ -241,6 +249,13 @@ public class ConvertPdListener extends RowsBaseListener {
 			return output_on_outlet0;
 
 					
+		}
+		else if(pdObject.name.equalsIgnoreCase("'tgl'")){
+			this.definitions.put(objectNumber, String.format("checkbox%s=checkbox(\"checkbox %s\");", objectNumber,objectNumber));		
+			String output_on_outlet0 = String.format("checkbox%s",objectNumber);						
+			pdObject.outputs.put(outletNumber, output_on_outlet0);
+			pdObject.outputTypes.put(0, "float");
+			return pdObject.outputs.get(outletNumber);
 		}
 		else if(pdObject.name.equalsIgnoreCase("PLUS")){
 			//Collect objects coming into inlet 0
@@ -636,10 +651,10 @@ public class ConvertPdListener extends RowsBaseListener {
 				Q = inlet2;
 			}
 			
-			
-			imports.add("import(\"filter.lib\");");
-			//this.definitions.put(objectNumber, String.format("resonbp%s=%s:bandpass(2,%s-1000,%s+1000);", objectNumber,inlet0,freq,freq));
-			this.definitions.put(objectNumber, String.format("resonbp%s=%s:resonbp(%s,%s,%s);", objectNumber,inlet0,freq,Q,"1"));
+			imports.add("import(\"effect.lib\");");
+			//imports.add("import(\"filter.lib\");");
+			this.definitions.put(objectNumber, String.format("resonbp%s=%s:moog_vcf_2bn((%s/10),%s);", objectNumber,inlet0,Q,freq));
+			//this.definitions.put(objectNumber, String.format("resonbp%s=%s:resonbp(%s,%s,%s);", objectNumber,inlet0,freq,Q,"1"));
 			String output_on_outlet0;
 			output_on_outlet0 = String.format("resonbp%s",objectNumber);
 			
@@ -891,6 +906,7 @@ public class ConvertPdListener extends RowsBaseListener {
 			pdObject.outputTypes.put(0, "float");		
 			return output_on_outlet0;					
 		}
+		
 		else if(pdObject.name.equalsIgnoreCase("'noise~'")){
 			List<Pair> comingSourcesToInlet0 = pdObject.objectInlets.get(0);
 			String inlet0="";
@@ -936,7 +952,7 @@ public class ConvertPdListener extends RowsBaseListener {
 
 			
 			// : *(20: component(\"music.lib\").db2linear: smooth(0.999))
-			String output_on_outlet0 = String.format("(%s:moog_vcf_2b((%s/10)^4,%s):*(70))",inlet0,inlet2,inlet1);						
+			String output_on_outlet0 = String.format("(%s:moog_vcf((%s/10)^4,%s)):*(12.5)",inlet0,inlet2,inlet1);						
 			pdObject.outputs.put(outletNumber, output_on_outlet0);
 			pdObject.outputTypes.put(0, "float");		
 			return output_on_outlet0;					
@@ -1161,6 +1177,10 @@ public class ConvertPdListener extends RowsBaseListener {
 				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.COS]));
 				objNo++;
 			}
+			else if(ctx.name.getType() == RowsParser.TGL){
+				pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.TGL]));
+				objNo++;
+			}
 			else if(ctx.name.getType() == RowsParser.VCF){
 				imports.add("import(\"effect.lib\");");
 				List<String> args = new ArrayList<String>();
@@ -1180,7 +1200,10 @@ public class ConvertPdListener extends RowsBaseListener {
 		}
 		
 		else if(ctx.type.getType() == RowsParser.FLOATATOM){
-			pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.FLOATATOM]));
+			List<String> args = new ArrayList<String>();
+			args.add(ctx.expr(3).getText());
+			args.add(ctx.expr(4).getText());
+			pdObjects.put(objNo, new PDObject(parser.getTokenNames()[RowsParser.FLOATATOM],args));
 			objNo++;
 		}
 		

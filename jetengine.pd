@@ -1,4 +1,4 @@
-#N canvas 1142 159 775 718 10;
+#N canvas 1138 169 775 718 10;
 #X obj 302 40 sig~;
 #X obj 301 63 lop~ 0.2;
 #X obj 253 492 *~ 0.5;
@@ -31,7 +31,6 @@
 #X msg 451 198 1;
 #X msg 487 198 0.6;
 #X obj 373 235 noise~;
-#X obj 374 270 bp~ 8000 0.5;
 #X obj 374 338 hip~ 120;
 #X obj 373 371 *~ 120;
 #X obj 374 400 clip~ -1 1;
@@ -39,6 +38,7 @@
 #X floatatom 303 17 5 0.1 1 0 - - -;
 #X obj 375 461 vcf~ 0 0.6;
 #X obj 373 307 vcf~ 0 1;
+#X obj 374 270 bp~ 8000 0.5;
 #X connect 0 0 1 0;
 #X connect 1 0 13 1;
 #X connect 1 0 14 1;
@@ -47,7 +47,7 @@
 #X connect 1 0 17 1;
 #X connect 1 0 27 1;
 #X connect 1 0 27 0;
-#X connect 1 0 36 0;
+#X connect 1 0 35 0;
 #X connect 2 0 3 0;
 #X connect 3 0 4 0;
 #X connect 4 0 6 0;
@@ -78,15 +78,15 @@
 #X connect 26 3 10 0;
 #X connect 26 4 11 0;
 #X connect 27 0 28 0;
-#X connect 28 0 39 1;
-#X connect 29 0 39 2;
-#X connect 30 0 38 2;
-#X connect 31 0 32 0;
-#X connect 32 0 39 0;
+#X connect 28 0 38 1;
+#X connect 29 0 38 2;
+#X connect 30 0 37 2;
+#X connect 31 0 39 0;
+#X connect 32 0 33 0;
 #X connect 33 0 34 0;
-#X connect 34 0 35 0;
-#X connect 35 0 38 0;
-#X connect 36 0 38 1;
-#X connect 37 0 0 0;
-#X connect 38 0 3 1;
-#X connect 39 0 33 0;
+#X connect 34 0 37 0;
+#X connect 35 0 37 1;
+#X connect 36 0 0 0;
+#X connect 37 0 3 1;
+#X connect 38 0 32 0;
+#X connect 39 0 38 0;
