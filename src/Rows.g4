@@ -3,7 +3,7 @@ grammar Rows;
 
 file: (row)+ ;
 row:XOBJ type=CONNECT INT? INT? INT? INT? SEMICOLON NL
-   |XOBJ type=OBJ INT INT name=OSC INT? SEMICOLON NL
+   |XOBJ type=OBJ INT INT name=OSC expr? SEMICOLON NL
    |XOBJ type=OBJ INT INT name=PHASOR INT? SEMICOLON NL
    |XOBJ type=OBJ INT INT name=DAC SEMICOLON NL
    |NOBJ type=CANVAS INT? INT? INT? INT? INT? SEMICOLON NL
@@ -25,6 +25,8 @@ row:XOBJ type=CONNECT INT? INT? INT? INT? SEMICOLON NL
    |XOBJ type=OBJ INT INT name=BP expr expr SEMICOLON NL
    |XOBJ type=OBJ INT INT name=HIP expr? SEMICOLON NL
    |XOBJ type=OBJ INT INT name=LOP expr? SEMICOLON NL
+   |XOBJ type=OBJ INT INT name=MAX expr? SEMICOLON NL
+   |XOBJ type=OBJ INT INT name=MIN expr? SEMICOLON NL
    |XOBJ type=OBJ INT INT name=GT expr? SEMICOLON NL
    |XOBJ type=OBJ INT INT name=LT expr? SEMICOLON NL
    |XOBJ type=OBJ INT INT name=EQ expr? SEMICOLON NL
@@ -76,6 +78,8 @@ UNPACK: 'unpack';
 COS: 'cos~';
 NOISE: 'noise~';
 TGL: 'tgl';
+MAX: 'max~';
+MIN: 'min~';
 
 INT: DIGIT+;
 FLOAT: DIGIT+ '.' DIGIT*;

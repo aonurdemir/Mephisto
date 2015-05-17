@@ -1,4 +1,4 @@
-#N canvas 1423 129 450 762 10;
+#N canvas 1421 134 450 762 10;
 #X obj 141 101 fcounter;
 #X msg 148 55 1000;
 #X obj 139 132 mod 6;
@@ -41,5 +41,6 @@
 #X connect 16 0 17 0;
 #X connect 17 0 18 0;
 #X connect 18 0 19 0;
+#X connect 18 0 19 1;
 #X connect 20 0 17 0;
 #X connect 21 0 10 1;
